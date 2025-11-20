@@ -42,7 +42,9 @@ export default function Home() {
 					</Feature>
 				</div>
 				<div style={{ marginTop: 40, fontWeight: 500, fontSize: "1.1rem" }}>
-					<GetStartedButton href="/login">Get Started</GetStartedButton>
+					<GetStartedButton href="/login" className="w-60">
+						Get Started
+					</GetStartedButton>
 				</div>
 			</main>
 			<footer style={{ marginTop: 64, fontSize: 14, color: "#888" }}>
