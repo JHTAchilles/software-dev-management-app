@@ -26,6 +26,8 @@
 		"autoprefixer": "^10.4.22",
 		"eslint": "^9.39.1",
 		"postcss": "^8.5.6",
+		"prettier": "^3.6.2",
+		"prettier-plugin-tailwindcss": "^0.7.1",
 		"tailwindcss": "^4.1.17",
 		"typescript": "5.9.2"
 	}
