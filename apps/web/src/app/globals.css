@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-primary: #ffffff;
+  --color-bg--secondary: #f9fbfc;
+  --color-shade-primary: #c4dff9;
+  --color-text-primary: #193e5d;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg-primary: var(--color-gray-900);
+    --color-shade-primary: #172340;
+    --color-text-primary: #c4dff9;
+  }
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  color: var(--color-text-primary);
+  background: var(--color-bg-primary);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.imgDark {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+
+  .imgLight {
+    display: none;
+  }
+  .imgDark {
+    display: unset;
+  }
+}
+
+@layer components {
+  .loginCard {
+    @apply shadow-light dark:shadow-dark min-w-100 rounded-3xl bg-[#f9fbfc] px-14 py-14 text-sm dark:bg-gray-800;
+  }
+}
+
+@utility shadow-light {
+  box-shadow: 0 0 12px 6px var(--color-shade-primary);
+}
+
+@utility shadow-dark {
+  box-shadow: 0 3px 12px 6px var(--color-shade-primary);
+}
+
+@utility input-focus {
+  @apply focus:ring-1 focus:ring-blue-400 focus:outline-none;
+}

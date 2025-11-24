@@ -19,6 +19,23 @@ This project is a Kanban-style web application designed to help teams and indivi
 - **Kanban Board:** Visual task management with columns for different progress states.
 - **Support for Multiple Users and Teams:** Collaborate on projects with others.
 
+## Getting Started
+
+1. **Install dependencies:**
+
+   ```bash
+   yarn install
+   ```
+
+2. **Run the development server:**
+
+   ```bash
+   yarn dev
+   ```
+
+   This will start the app locally. Open http://localhost:3000 in your browser to view it.
+
 ## Contributors
 
 - JHTAchilles
+- KieranChiu
