@@ -2,16 +2,40 @@
 
 @theme {
   --color-bg-primary: #ffffff;
-  --color-bg--secondary: #f9fbfc;
-  --color-shade-primary: #c4dff9;
   --color-text-primary: #193e5d;
+
+  /* Theme Colors */
+  --color-primary: #2563eb;
+  --color-primary-dark: #4f46e5;
+  --color-surface: #f8fafc;
+  --color-surface-dark: #1e293b;
+  --color-card: #ffffff;
+  --color-card-dark: #334155;
+  --color-text-secondary: #475569;
+  --color-text-secondary-dark: #94a3b8;
+  --color-border: #cbd5e1;
+  --color-border-dark: #475569;
+
+  /* Gradient Colors */
+  --gradient-from-primary: #2563eb;
+  --gradient-to-primary: #4f46e5;
+  --gradient-from-surface: #f1f5f9;
+  --gradient-via-surface: #e0f2fe;
+  --gradient-to-surface: #ddd6fe;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --color-bg-primary: var(--color-gray-900);
-    --color-shade-primary: #172340;
     --color-text-primary: #c4dff9;
+
+    --color-surface: #0f172a;
+    --color-card: #1e293b;
+    --color-text-secondary: #94a3b8;
+    --color-border: #475569;
+    --gradient-from-surface: #0f172a;
+    --gradient-via-surface: #1e293b;
+    --gradient-to-surface: #0f172a;
   }
 }
 
@@ -29,39 +53,4 @@ body {
 a {
   color: inherit;
   text-decoration: none;
-}
-
-.imgDark {
-  display: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-
-  .imgLight {
-    display: none;
-  }
-  .imgDark {
-    display: unset;
-  }
-}
-
-@layer components {
-  .loginCard {
-    @apply shadow-light dark:shadow-dark min-w-100 rounded-3xl bg-[#f9fbfc] px-14 py-14 text-sm dark:bg-gray-800;
-  }
-}
-
-@utility shadow-light {
-  box-shadow: 0 0 12px 6px var(--color-shade-primary);
-}
-
-@utility shadow-dark {
-  box-shadow: 0 3px 12px 6px var(--color-shade-primary);
-}
-
-@utility input-focus {
-  @apply focus:ring-1 focus:ring-blue-400 focus:outline-none;
 }

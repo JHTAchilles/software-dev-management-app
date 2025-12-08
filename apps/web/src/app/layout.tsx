@@ -8,8 +8,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="flex min-h-screen flex-col bg-linear-to-br from-blue-50 via-white to-blue-100 text-gray-900 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 dark:text-gray-100">
-        {children}
+      <body className="text-text-primary flex min-h-screen flex-col bg-linear-to-br from-(--gradient-from-surface) via-(--gradient-via-surface) to-(--gradient-to-surface)">
+        <main className="flex-1">{children}</main>
         <Footer />
       </body>
     </html>
