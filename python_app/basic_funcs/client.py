@@ -4,7 +4,7 @@ import pyaudio
 import numpy as np
 import librosa
 import time
-import ChatBox
+import python_app.basic_funcs.chatBox
 
 
 class Client:

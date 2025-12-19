@@ -12,10 +12,10 @@ from PyQt5.QtCore import QTimer, QUrl, Qt,QObject, pyqtSignal, pyqtSlot
 
 from python_app.ui.roomlistUI import *
 
-from server_discovery import ServerDiscovery
-from server import Server
-from client import Client
-from ChatBox import ChatBox
+from python_app.basic_funcs.server_discovery import ServerDiscovery
+from python_app.basic_funcs.server import Server
+from python_app.basic_funcs.client import Client
+from python_app.basic_funcs.chatBox import ChatBox
 
 class ChatRoom(QMainWindow):
     def __init__(self,username):

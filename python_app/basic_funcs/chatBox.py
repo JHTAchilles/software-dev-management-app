@@ -12,11 +12,11 @@ from PyQt5.Qt import *
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QTimer, QUrl, Qt, QObject, pyqtSignal, pyqtSlot
 from python_app.ui.chatboxUI import *
-from server_discovery import ServerDiscovery
+from python_app.basic_funcs.server_discovery import ServerDiscovery
 import pyaudio
 
-from karaoke import Karaoke
-from phaseIIRecorder import PhaseIIRecorderUI
+# from karaoke import Karaoke
+# from phaseIIRecorder import PhaseIIRecorderUI
 
 boy_status = False
 girl_status = False
@@ -35,12 +35,12 @@ class ChatBox(QMainWindow):
         self.ui.setupUi(self)
         self.msg = ""
         self.my_message = ''
-        self.recorder = PhaseIIRecorderUI()
+        # self.recorder = PhaseIIRecorderUI()
         global boy_status, girl_status, mute_status, close_voice_status, funny_status
         boy_status = girl_status = mute_status = close_voice_status = funny_status = False
         self.client = client
         self.server = server
-        self.karaoke = None
+        # self.karaoke = None
         self.user = []
         threading.Thread(target=self.get_online_users).start()
         threading.Thread(target=self.update_text_message).start()
@@ -49,11 +49,11 @@ class ChatBox(QMainWindow):
         # send txt
         self.ui.pushButton_2.clicked.connect(self.send_txt)
         # sound recorder
-        self.ui.pushButton_6.clicked.connect(self.recording)
+        # self.ui.pushButton_6.clicked.connect(self.recording)
         # add muting function
         self.ui.pushButton_3.clicked.connect(self.muting)
         # karaoke
-        self.ui.pushButton_5.clicked.connect(self.kok)
+        # self.ui.pushButton_5.clicked.connect(self.kok)
 
         # add voice change menu
         self.menu = QMenu()
@@ -72,8 +72,8 @@ class ChatBox(QMainWindow):
         self.ui.toolButton.setMenu(self.menu)
         self.ui.toolButton.setPopupMode(QToolButton.InstantPopup)
 
-    def kok(self):
-        os.system("python karaoke.py")
+    # def kok(self):
+    #     os.system("python karaoke.py")
 
     def send_txt(self):
         self.msg = self.ui.textEdit_2.toPlainText()
