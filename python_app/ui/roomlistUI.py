@@ -21,8 +21,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.frame = QtWidgets.QFrame(self.centralwidget)
         self.frame.setStyleSheet("#frame{\n"
-"    background-image: url(../designer/2.png);\n"
-"}")
+                                 "    background-image: url(../designer/2.png);\n"
+                                 "}")
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
@@ -35,26 +35,39 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
         self.widget.setSizePolicy(sizePolicy)
         self.widget.setStyleSheet("#widget{\n"
-"    background-color:rgba(24, 23, 23, 0)\n"
-"}")
+                                  "    background-color:rgba(24, 23, 23, 0)\n"
+                                  "}")
         self.widget.setObjectName("widget")
+
+        # Add a vertical layout to the widget for centering
+        self.widget_layout = QtWidgets.QVBoxLayout(self.widget)
+        self.widget_layout.setContentsMargins(0, 0, 0, 0)
+        self.widget_layout.setSpacing(10)
+        self.widget_layout.setObjectName("widget_layout")
+
         self.label = QtWidgets.QLabel(self.widget)
-        self.label.setGeometry(QtCore.QRect(160, 0, 81, 81))
+        self.label.setFixedSize(81, 81)  # Keep fixed size for image
         self.label.setText("")
         self.label.setPixmap(QtGui.QPixmap("../designer/gg.png"))
         self.label.setScaledContents(True)
         self.label.setObjectName("label")
+        self.widget_layout.addWidget(self.label, 0, QtCore.Qt.AlignHCenter)
+
         self.label_2 = QtWidgets.QLabel(self.widget)
-        self.label_2.setGeometry(QtCore.QRect(100, 90, 211, 31))
         font = QtGui.QFont()
         font.setFamily("Algerian")
         font.setPointSize(16)
         self.label_2.setFont(font)
         self.label_2.setStyleSheet("#label_2{\n"
-"    color: white;\n"
-"}")
+                                   "    color: white;\n"
+                                   "}")
         self.label_2.setTextFormat(QtCore.Qt.MarkdownText)
         self.label_2.setObjectName("label_2")
+        self.widget_layout.addWidget(self.label_2, 0, QtCore.Qt.AlignHCenter)
+
+        # Add stretch to center vertically if needed, but since expanding, optional
+        self.widget_layout.addStretch()
+
         self.verticalLayout.addWidget(self.widget)
         self.frame_2 = QtWidgets.QFrame(self.frame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
@@ -70,15 +83,16 @@ class Ui_MainWindow(object):
         self.pushButton = QtWidgets.QPushButton(self.frame_2)
         self.pushButton.setMinimumSize(QtCore.QSize(40, 50))
         self.pushButton.setStyleSheet("#pushButton{\n"
-"    background-image: url(../designer/1.png);\n"
-"}\n"
-"#pushButton:hover {\n"
-"    background-color:rgb(71, 68, 68);\n"
-"}\n"
-"#pushButton:pressed {\n"
-"    background-color: #CCCCCC;\n"
-"}")
-        self.pushButton.setText("")
+                                      "    background-color: white;\n"
+                                      "    font-weight: bold;\n"
+                                      "}\n"
+                                      "#pushButton:hover {\n"
+                                      "    background-color:rgb(71, 68, 68);\n"
+                                      "}\n"
+                                      "#pushButton:pressed {\n"
+                                      "    background-color: #CCCCCC;\n"
+                                      "}")
+        self.pushButton.setText("Create a Project")
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("designer/plus-solid.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.pushButton.setIcon(icon)
@@ -88,15 +102,16 @@ class Ui_MainWindow(object):
         self.pushButton_2 = QtWidgets.QPushButton(self.frame_2)
         self.pushButton_2.setMinimumSize(QtCore.QSize(40, 50))
         self.pushButton_2.setStyleSheet("#pushButton_2{\n"
-"    background-image: url(../designer/1.png);\n"
-"}\n"
-"#pushButton_2:hover {\n"
-"    background-color:rgb(71, 68, 68);\n"
-"}\n"
-"#pushButton_2:pressed {\n"
-"    background-color: #CCCCCC;\n"
-"}")
-        self.pushButton_2.setText("")
+                                        "    background-color: white;\n"
+                                        "    font-weight: bold;\n"
+                                        "}\n"
+                                        "#pushButton_2:hover {\n"
+                                        "    background-color:rgb(71, 68, 68);\n"
+                                        "}\n"
+                                        "#pushButton_2:pressed {\n"
+                                        "    background-color: #CCCCCC;\n"
+                                        "}")
+        self.pushButton_2.setText("Open a Project")
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap("designer/arrows-rotate-solid.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.pushButton_2.setIcon(icon1)
@@ -110,32 +125,33 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.listWidget.sizePolicy().hasHeightForWidth())
         self.listWidget.setSizePolicy(sizePolicy)
         self.listWidget.setStyleSheet("QListWidget {\n"
-"    font: 13pt \"Cooper Black\";\n"
-"    background-color:rgba(255, 255, 255,0);\n"
-"    border: none;\n"
-"}\n"
-"\n"
-"QListWidget::item {\n"
-"    color: white;  \n"
-"}\n"
-"\n"
-"QListWidget::item:selected {\n"
-"    background-color:rgb(29, 28, 28);\n"
-"    border: 1px solid white; \n"
-"    border-radius: 22px;\n"
-"\n"
-"}\n"
-"\n"
-"QListWidget::item:hover { \n"
-"    color: rgb(61, 56, 55);\n"
-"}\n"
-"\n"
-"QListView::item {\n"
-"    height: 50px;\n"
-"    border: 1px solid white; \n"
-"    border-radius: 22px;\n"
-"}")
-        self.listWidget.setEditTriggers(QtWidgets.QAbstractItemView.DoubleClicked|QtWidgets.QAbstractItemView.EditKeyPressed|QtWidgets.QAbstractItemView.SelectedClicked)
+                                      "    font: 13pt \"Cooper Black\";\n"
+                                      "    background-color:rgba(255, 255, 255,0);\n"
+                                      "    border: none;\n"
+                                      "}\n"
+                                      "\n"
+                                      "QListWidget::item {\n"
+                                      "    color: white;  \n"
+                                      "}\n"
+                                      "\n"
+                                      "QListWidget::item:selected {\n"
+                                      "    background-color:rgb(29, 28, 28);\n"
+                                      "    border: 1px solid white; \n"
+                                      "    border-radius: 22px;\n"
+                                      "\n"
+                                      "}\n"
+                                      "\n"
+                                      "QListWidget::item:hover { \n"
+                                      "    color: rgb(61, 56, 55);\n"
+                                      "}\n"
+                                      "\n"
+                                      "QListView::item {\n"
+                                      "    height: 50px;\n"
+                                      "    border: 1px solid white; \n"
+                                      "    border-radius: 22px;\n"
+                                      "}")
+        self.listWidget.setEditTriggers(
+            QtWidgets.QAbstractItemView.DoubleClicked | QtWidgets.QAbstractItemView.EditKeyPressed | QtWidgets.QAbstractItemView.SelectedClicked)
         self.listWidget.setResizeMode(QtWidgets.QListView.Adjust)
         self.listWidget.setGridSize(QtCore.QSize(60, 60))
         self.listWidget.setObjectName("listWidget")
@@ -149,4 +165,4 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label_2.setText(_translate("MainWindow", "P2P Chat Room"))
+        self.label_2.setText(_translate("MainWindow", "Workspace"))
