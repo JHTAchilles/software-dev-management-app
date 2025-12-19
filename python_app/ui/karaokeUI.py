@@ -52,7 +52,7 @@ class Ui_MainWindow(object):
         self.frame_2.setSizePolicy(sizePolicy)
         self.frame_2.setStyleSheet("#frame_2{\n"
 "    \n"
-"    background-image: url(./designer/2.png);\n"
+"    background-image: url(../designer/2.png);\n"
 "}")
         self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -100,7 +100,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.frame_4.sizePolicy().hasHeightForWidth())
         self.frame_4.setSizePolicy(sizePolicy)
         self.frame_4.setStyleSheet("#frame_4{\n"
-"    background-image: url(./designer/2.png);\n"
+"    background-image: url(../designer/2.png);\n"
 "}")
         self.frame_4.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_4.setFrameShadow(QtWidgets.QFrame.Raised)

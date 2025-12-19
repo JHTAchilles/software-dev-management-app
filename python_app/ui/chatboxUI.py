@@ -22,7 +22,7 @@ class Ui_MainWindow(object):
         self.frame = QtWidgets.QFrame(self.centralwidget)
         self.frame.setStyleSheet("#frame{\n"
 "    \n"
-"    background-image: url(./designer/2.png);\n"
+"    background-image: url(../designer/2.png);\n"
 "}")
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)

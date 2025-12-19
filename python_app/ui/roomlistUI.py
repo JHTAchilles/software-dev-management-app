@@ -21,7 +21,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.frame = QtWidgets.QFrame(self.centralwidget)
         self.frame.setStyleSheet("#frame{\n"
-"    background-image: url(./designer/2.png);\n"
+"    background-image: url(../designer/2.png);\n"
 "}")
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -41,7 +41,7 @@ class Ui_MainWindow(object):
         self.label = QtWidgets.QLabel(self.widget)
         self.label.setGeometry(QtCore.QRect(160, 0, 81, 81))
         self.label.setText("")
-        self.label.setPixmap(QtGui.QPixmap("designer/gg.png"))
+        self.label.setPixmap(QtGui.QPixmap("../designer/gg.png"))
         self.label.setScaledContents(True)
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(self.widget)
@@ -70,7 +70,7 @@ class Ui_MainWindow(object):
         self.pushButton = QtWidgets.QPushButton(self.frame_2)
         self.pushButton.setMinimumSize(QtCore.QSize(40, 50))
         self.pushButton.setStyleSheet("#pushButton{\n"
-"    background-image: url(./designer/1.png);\n"
+"    background-image: url(../designer/1.png);\n"
 "}\n"
 "#pushButton:hover {\n"
 "    background-color:rgb(71, 68, 68);\n"
@@ -88,7 +88,7 @@ class Ui_MainWindow(object):
         self.pushButton_2 = QtWidgets.QPushButton(self.frame_2)
         self.pushButton_2.setMinimumSize(QtCore.QSize(40, 50))
         self.pushButton_2.setStyleSheet("#pushButton_2{\n"
-"    background-image: url(./designer/1.png);\n"
+"    background-image: url(../designer/1.png);\n"
 "}\n"
 "#pushButton_2:hover {\n"
 "    background-color:rgb(71, 68, 68);\n"

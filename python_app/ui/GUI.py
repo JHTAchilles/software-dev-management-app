@@ -12,7 +12,7 @@ class LoginWindow(QDialog):
         super().__init__()
 
         self.setWindowTitle("Login")
-        self.setWindowIcon(QIcon("./designer/login_icon.png"))
+        self.setWindowIcon(QIcon("../designer/login_icon.png"))
         self.setGeometry(200, 200, 600, 300)
 
         # username
