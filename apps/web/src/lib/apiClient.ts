@@ -15,7 +15,8 @@ export async function fetchWithAuth(
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  if (options.body && typeof options.body === "object") {
+  // Set Content-Type for requests with body (string means it's already JSON.stringify'd)
+  if (options.body && typeof options.body === "string") {
     headers.set("Content-Type", "application/json");
   }
 
@@ -45,10 +46,16 @@ export async function handleApiError(response: Response): Promise<never> {
     const error: ApiError = await response.json();
     errorMessage = error.detail || errorMessage;
   } catch {
-    // If JSON parsing fails, use default message
+    // If JSON parsing fails, use status text
+    errorMessage = response.statusText || errorMessage;
   }
 
-  throw new Error(errorMessage);
+  // Include status code in error message for better error handling
+  if (response.status === 404) {
+    throw new Error(`Not found (404): ${errorMessage}`);
+  }
+
+  throw new Error(`${errorMessage} (${response.status})`);
 }
 
 /**
