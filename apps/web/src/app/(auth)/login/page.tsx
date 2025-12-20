@@ -3,6 +3,7 @@
 import { FiUserCheck } from "react-icons/fi";
 import { useState } from "react";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -10,6 +11,7 @@ export default function Login() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,7 +19,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // TODO: Login handler
+      await login({ username, password });
     } catch (err: any) {
       setError(err.message || "Login failed. Please check your credentials.");
     } finally {

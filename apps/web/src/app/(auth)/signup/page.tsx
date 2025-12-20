@@ -3,6 +3,7 @@
 import { FiUserPlus } from "react-icons/fi";
 import { useState } from "react";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Signup() {
   const [username, setUsername] = useState("");
@@ -12,6 +13,7 @@ export default function Signup() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const { register } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,10 +24,15 @@ export default function Signup() {
       return;
     }
 
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      // TODO: Registration handler
+      await register({ username, email, password });
     } catch (err: any) {
       setError(err.message || "Registration failed. Please try again.");
     } finally {
@@ -67,6 +74,8 @@ export default function Signup() {
                 onChange={(e) => setUsername(e.target.value)}
                 required
                 disabled={loading}
+                minLength={3}
+                maxLength={30}
                 placeholder="Choose a username"
                 className="border-border bg-card text-text-primary placeholder-text-secondary/50 focus:border-primary focus:ring-primary/20 dark:border-border-dark dark:bg-card-dark w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none disabled:opacity-50"
               />

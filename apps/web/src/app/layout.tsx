@@ -1,4 +1,6 @@
 import Footer from "../components/footer";
+import AuthenticatedNav from "@/components/AuthenticatedNav";
+import { AuthProvider } from "@/contexts/AuthContext";
 import "./globals.css";
 
 export default function RootLayout({
@@ -9,8 +11,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="text-text-primary flex min-h-screen flex-col bg-linear-to-br from-(--gradient-from-surface) via-(--gradient-via-surface) to-(--gradient-to-surface)">
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <AuthProvider>
+          <AuthenticatedNav />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );
