@@ -2,6 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
+from src.db.database import create_db_and_tables
+from src.routers import auth
+from src.core.config import settings
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -12,14 +16,31 @@ async def lifespan(app: FastAPI):
     Initializes database tables on startup.
     """
     # Startup: Initialize database tables
-    # init_db()
+    await create_db_and_tables()
     print("Database initialized successfully")
     yield
     # Shutdown: Add cleanup code here if needed
     print("Application shutting down")
 
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(
+    title="Software Development Management API",
+    description="API for managing software development projects and tasks",
+    version="1.0.0",
+    lifespan=lifespan,
+)
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Include routers
+app.include_router(auth.router)
 
 
 @app.get("/", tags=["Root"])
