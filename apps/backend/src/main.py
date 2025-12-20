@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from src.db.database import create_db_and_tables
-from src.routers import auth, projects
+from src.routers import auth, projects, users
 from src.core.config import settings
 
 
@@ -41,6 +41,8 @@ app.add_middleware(
 
 # Include routers
 app.include_router(auth.router)
+if settings.DEBUG:
+    app.include_router(users.router)
 app.include_router(projects.router)
 
 
