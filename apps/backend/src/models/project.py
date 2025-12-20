@@ -7,6 +7,7 @@ from src.db.database import Base
 
 if TYPE_CHECKING:
     from src.models.user import User
+    from src.models.task import Task
 
 
 # Association table for many-to-many relationship between users and projects
@@ -17,7 +18,7 @@ user_projects = Table(
     Column(
         "project_id", ForeignKey("projects.id", ondelete="CASCADE"), primary_key=True
     ),
-    Column("joined_at", DateTime, default=datetime.utcnow),
+    Column("joined_at", DateTime, default=datetime.now),
 )
 
 
@@ -34,12 +35,17 @@ class Project(Base):
     )
     title: Mapped[str] = mapped_column(String(200), nullable=False)
     description: Mapped[str] = mapped_column(String(1000), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+        DateTime, default=datetime.now, onupdate=datetime.now
     )
 
     # Many-to-many relationship with users
     users: Mapped[list["User"]] = relationship(
         "User", secondary=user_projects, back_populates="projects"
+    )
+
+    # One-to-many relationship with tasks
+    tasks: Mapped[list["Task"]] = relationship(
+        "Task", back_populates="project", cascade="all, delete-orphan"
     )
