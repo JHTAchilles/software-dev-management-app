@@ -9,22 +9,28 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [userLicense, setUserLicense] = useState("");
-  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Integrate with backend API
     setError("");
-    setMessage("");
 
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
 
-    setMessage(`Account created for ${email}`);
+    setLoading(true);
+
+    try {
+      // TODO: Registration handler
+    } catch (err: any) {
+      setError(err.message || "Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -60,8 +66,9 @@ export default function Signup() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
+                disabled={loading}
                 placeholder="Choose a username"
-                className="border-border bg-card text-text-primary placeholder-text-secondary/50 focus:border-primary focus:ring-primary/20 dark:border-border-dark dark:bg-card-dark w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
+                className="border-border bg-card text-text-primary placeholder-text-secondary/50 focus:border-primary focus:ring-primary/20 dark:border-border-dark dark:bg-card-dark w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none disabled:opacity-50"
               />
             </div>
 
@@ -78,8 +85,9 @@ export default function Signup() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={loading}
                 placeholder="Enter your email"
-                className="border-border bg-card text-text-primary placeholder-text-secondary/50 focus:border-primary focus:ring-primary/20 dark:border-border-dark dark:bg-card-dark w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
+                className="border-border bg-card text-text-primary placeholder-text-secondary/50 focus:border-primary focus:ring-primary/20 dark:border-border-dark dark:bg-card-dark w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none disabled:opacity-50"
               />
             </div>
 
@@ -96,8 +104,10 @@ export default function Signup() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                placeholder="Create a password"
-                className="border-border bg-card text-text-primary placeholder-text-secondary/50 focus:border-primary focus:ring-primary/20 dark:border-border-dark dark:bg-card-dark w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
+                disabled={loading}
+                minLength={6}
+                placeholder="Create a password (min 6 characters)"
+                className="border-border bg-card text-text-primary placeholder-text-secondary/50 focus:border-primary focus:ring-primary/20 dark:border-border-dark dark:bg-card-dark w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none disabled:opacity-50"
               />
             </div>
 
@@ -114,36 +124,17 @@ export default function Signup() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
+                disabled={loading}
                 placeholder="Confirm your password"
-                className="border-border bg-card text-text-primary placeholder-text-secondary/50 focus:border-primary focus:ring-primary/20 dark:border-border-dark dark:bg-card-dark w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
+                className="border-border bg-card text-text-primary placeholder-text-secondary/50 focus:border-primary focus:ring-primary/20 dark:border-border-dark dark:bg-card-dark w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none disabled:opacity-50"
               />
-            </div>
-
-            <div>
-              <label
-                htmlFor="userLicense"
-                className="text-text-primary mb-2 block text-sm font-medium"
-              >
-                License Key
-              </label>
-              <input
-                id="userLicense"
-                type="text"
-                value={userLicense}
-                onChange={(e) => setUserLicense(e.target.value)}
-                required
-                placeholder="Enter your license key"
-                className="border-border bg-card text-text-primary placeholder-text-secondary/50 focus:border-primary focus:ring-primary/20 dark:border-border-dark dark:bg-card-dark w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
-              />
-              <p className="text-text-secondary mt-1 text-xs">
-                Contact your administrator for a license key
-              </p>
             </div>
 
             <div className="flex items-start gap-2">
               <input
                 type="checkbox"
                 required
+                disabled={loading}
                 className="border-border text-primary focus:ring-primary/20 mt-1 h-4 w-4 rounded focus:ring-2"
               />
               <span className="text-text-secondary mt-1 text-xs">
@@ -153,9 +144,10 @@ export default function Signup() {
 
             <button
               type="submit"
-              className="from-primary to-primary-dark w-full rounded-lg bg-linear-to-r px-6 py-3 font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
+              disabled={loading}
+              className="from-primary to-primary-dark w-full rounded-lg bg-linear-to-r px-6 py-3 font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:hover:scale-100"
             >
-              Create Account
+              {loading ? "Creating Account..." : "Create Account"}
             </button>
           </form>
 
