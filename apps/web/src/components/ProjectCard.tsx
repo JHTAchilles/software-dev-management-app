@@ -9,7 +9,8 @@ import { Project } from "@/types";
 
 export function ProjectCard({ project }: { project: Project }) {
   return (
-    <Link href={`/project2?id=${project.id}`}>
+    // TODO: update link to project
+    <Link href={`/project/${project.id}`}>
       <div className="group bg-card dark:bg-card-dark border-border dark:border-border-dark relative overflow-hidden rounded-2xl border p-6 shadow-lg transition-all hover:scale-105 hover:shadow-2xl">
         {/* Gradient Header */}
         <div className="absolute top-0 left-0 h-1.5 w-full bg-linear-to-r from-purple-500 to-pink-500" />

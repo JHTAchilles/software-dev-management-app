@@ -2,31 +2,38 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { FiChevronLeft, FiPlus } from "react-icons/fi";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
-import { apiGet, apiPost, apiPut } from "@/lib/apiClient";
+import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/apiClient";
 import { API_ENDPOINTS } from "@/lib/api";
 import {
   TaskWithAssignees,
   TaskState,
   CreateTaskRequest,
   UpdateTaskRequest,
-  Project,
+  ProjectWithUsers,
 } from "@/types";
 import { KanbanColumn } from "@/components/KanbanColumn";
 
 function KanbanBoard() {
-  const searchParams = useSearchParams();
+  const params = useParams();
   const router = useRouter();
-  const projectId = searchParams.get("id");
+  const projectId = params.id as string;
 
-  const [project, setProject] = useState<Project | null>(null);
+  const [project, setProject] = useState<ProjectWithUsers | null>(null);
   const [tasks, setTasks] = useState<TaskWithAssignees[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<TaskWithAssignees | null>(
+    null,
+  );
   const [creating, setCreating] = useState(false);
+  const [updating, setUpdating] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // Form states
   const [newTaskTitle, setNewTaskTitle] = useState("");
@@ -35,6 +42,15 @@ function KanbanBoard() {
     TaskState.SCHEDULED,
   );
   const [newTaskDueDate, setNewTaskDueDate] = useState("");
+
+  // Edit task states
+  const [editTaskTitle, setEditTaskTitle] = useState("");
+  const [editTaskDescription, setEditTaskDescription] = useState("");
+  const [editTaskState, setEditTaskState] = useState<TaskState>(
+    TaskState.SCHEDULED,
+  );
+  const [editTaskDueDate, setEditTaskDueDate] = useState("");
+  const [editTaskAssignees, setEditTaskAssignees] = useState<string[]>([]);
 
   useEffect(() => {
     if (!projectId) {
@@ -57,7 +73,7 @@ function KanbanBoard() {
       setError("");
 
       // Fetch project details
-      const projectData = await apiGet<Project>(
+      const projectData = await apiGet<ProjectWithUsers>(
         API_ENDPOINTS.projects.detail(projectId),
       );
       setProject(projectData);
@@ -165,6 +181,106 @@ function KanbanBoard() {
     }
   };
 
+  const openEditModal = (task: TaskWithAssignees) => {
+    setSelectedTask(task);
+    setEditTaskTitle(task.title);
+    setEditTaskDescription(task.description || "");
+    setEditTaskState(task.state);
+    setEditTaskDueDate(
+      task.due_date ? new Date(task.due_date).toISOString().slice(0, 16) : "",
+    );
+    setEditTaskAssignees(task.assignees?.map((a) => a.id) || []);
+    setShowEditModal(true);
+    setError("");
+  };
+
+  const handleUpdateTask = async () => {
+    if (!selectedTask || !editTaskTitle.trim()) {
+      setError("Task title is required");
+      return;
+    }
+
+    try {
+      setUpdating(true);
+      setError("");
+
+      // Update task details
+      const updateData: UpdateTaskRequest = {
+        title: editTaskTitle,
+        description: editTaskDescription || undefined,
+        state: editTaskState,
+        due_date: editTaskDueDate || undefined,
+      };
+
+      await apiPut(API_ENDPOINTS.tasks.update(selectedTask.id), updateData);
+
+      // Update assignees
+      const currentAssigneeIds = selectedTask.assignees?.map((a) => a.id) || [];
+      const toAdd = editTaskAssignees.filter(
+        (id) => !currentAssigneeIds.includes(id),
+      );
+      const toRemove = currentAssigneeIds.filter(
+        (id) => !editTaskAssignees.includes(id),
+      );
+
+      // Add new assignees
+      for (const userId of toAdd) {
+        await apiPost(API_ENDPOINTS.tasks.assign(selectedTask.id, userId), {});
+      }
+
+      // Remove unassigned users
+      for (const userId of toRemove) {
+        await apiDelete(API_ENDPOINTS.tasks.unassign(selectedTask.id, userId));
+      }
+
+      // Refresh task with updated data
+      const updatedTask = await fetchTaskById(selectedTask.id);
+      if (updatedTask) {
+        setTasks(
+          tasks.map((task) =>
+            task.id === selectedTask.id ? updatedTask : task,
+          ),
+        );
+      }
+
+      setShowEditModal(false);
+      setSelectedTask(null);
+    } catch (err: any) {
+      setError(err.message || "Failed to update task");
+      console.error("Error updating task:", err);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const openDeleteConfirm = (task: TaskWithAssignees) => {
+    setSelectedTask(task);
+    setShowDeleteConfirm(true);
+    setError("");
+  };
+
+  const handleDeleteTask = async () => {
+    if (!selectedTask) return;
+
+    try {
+      setDeleting(true);
+      setError("");
+
+      await apiDelete(API_ENDPOINTS.tasks.delete(selectedTask.id));
+
+      // Remove task from local state
+      setTasks(tasks.filter((task) => task.id !== selectedTask.id));
+
+      setShowDeleteConfirm(false);
+      setSelectedTask(null);
+    } catch (err: any) {
+      setError(err.message || "Failed to delete task");
+      console.error("Error deleting task:", err);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   // Group tasks by state
   const scheduledTasks = tasks.filter(
     (task) => task.state === TaskState.SCHEDULED,
@@ -224,15 +340,17 @@ function KanbanBoard() {
                 </div>
               </div>
             </div>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="group from-primary to-primary-dark relative overflow-hidden rounded-xl bg-linear-to-r px-6 py-3 font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
-            >
-              <span className="relative z-10 flex items-center gap-2">
-                <FiPlus size={22} />
-                New Task
-              </span>
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="group from-primary to-primary-dark relative overflow-hidden rounded-xl bg-linear-to-r px-6 py-3 font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  <FiPlus size={22} />
+                  New Task
+                </span>
+              </button>
+            </div>
           </div>
 
           {/* Stats */}
@@ -299,6 +417,8 @@ function KanbanBoard() {
               color="purple"
               tasks={scheduledTasks}
               onUpdateState={handleUpdateTaskState}
+              onEditClick={openEditModal}
+              onDeleteClick={openDeleteConfirm}
             />
 
             {/* In Progress Column */}
@@ -307,6 +427,8 @@ function KanbanBoard() {
               color="blue"
               tasks={inProgressTasks}
               onUpdateState={handleUpdateTaskState}
+              onEditClick={openEditModal}
+              onDeleteClick={openDeleteConfirm}
             />
 
             {/* Completed Column */}
@@ -315,6 +437,8 @@ function KanbanBoard() {
               color="green"
               tasks={completedTasks}
               onUpdateState={handleUpdateTaskState}
+              onEditClick={openEditModal}
+              onDeleteClick={openDeleteConfirm}
             />
           </div>
         )}
@@ -418,6 +542,189 @@ function KanbanBoard() {
                 }}
                 disabled={creating}
                 className="border-border bg-card text-text-primary hover:bg-card dark:border-border-dark dark:bg-card-dark dark:hover:bg-card-dark flex-1 rounded-lg border px-6 py-3 font-semibold transition-colors hover:opacity-90 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Task Modal */}
+      {showEditModal && selectedTask && project && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="bg-card dark:bg-card-dark max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl p-8 shadow-2xl">
+            <h2 className="text-text-primary text-2xl font-bold">Edit Task</h2>
+            <p className="text-text-secondary mt-2 text-sm">
+              Update task details and assignees
+            </p>
+
+            {error && (
+              <div className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
+                {error}
+              </div>
+            )}
+
+            <div className="mt-6 space-y-4">
+              <div>
+                <label className="text-text-primary mb-2 block text-sm font-medium">
+                  Task Title *
+                </label>
+                <input
+                  type="text"
+                  value={editTaskTitle}
+                  onChange={(e) => setEditTaskTitle(e.target.value)}
+                  className="border-border bg-card text-text-primary placeholder-text-secondary/50 focus:border-primary focus:ring-primary/20 dark:border-border-dark dark:bg-card-dark w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
+                  maxLength={200}
+                />
+              </div>
+
+              <div>
+                <label className="text-text-primary mb-2 block text-sm font-medium">
+                  Description
+                </label>
+                <textarea
+                  value={editTaskDescription}
+                  onChange={(e) => setEditTaskDescription(e.target.value)}
+                  rows={3}
+                  className="border-border bg-card text-text-primary placeholder-text-secondary/50 focus:border-primary focus:ring-primary/20 dark:border-border-dark dark:bg-card-dark w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
+                  maxLength={2000}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-text-primary mb-2 block text-sm font-medium">
+                    Status
+                  </label>
+                  <select
+                    value={editTaskState}
+                    onChange={(e) =>
+                      setEditTaskState(e.target.value as TaskState)
+                    }
+                    className="border-border bg-card text-text-primary focus:border-primary focus:ring-primary/20 dark:border-border-dark dark:bg-card-dark w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
+                  >
+                    <option value={TaskState.SCHEDULED}>Scheduled</option>
+                    <option value={TaskState.IN_PROGRESS}>In Progress</option>
+                    <option value={TaskState.COMPLETED}>Completed</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-text-primary mb-2 block text-sm font-medium">
+                    Due Date
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={editTaskDueDate}
+                    onChange={(e) => setEditTaskDueDate(e.target.value)}
+                    className="border-border bg-card text-text-primary focus:border-primary focus:ring-primary/20 dark:border-border-dark dark:bg-card-dark w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-text-primary mb-2 block text-sm font-medium">
+                  Assignees
+                </label>
+                <div className="border-border dark:border-border-dark max-h-48 space-y-2 overflow-y-auto rounded-lg border p-3">
+                  {project.users.map((user) => (
+                    <label
+                      key={user.id}
+                      className="hover:bg-surface dark:hover:bg-surface-dark flex cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={editTaskAssignees.includes(user.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setEditTaskAssignees([
+                              ...editTaskAssignees,
+                              user.id,
+                            ]);
+                          } else {
+                            setEditTaskAssignees(
+                              editTaskAssignees.filter((id) => id !== user.id),
+                            );
+                          }
+                        }}
+                        className="text-primary focus:ring-primary/20 h-4 w-4 rounded border-gray-300"
+                      />
+                      <div className="from-primary to-primary-dark flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-r text-sm font-semibold text-white">
+                        {user.username[0]?.toUpperCase()}
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-text-primary text-sm font-medium">
+                          {user.username}
+                        </div>
+                        <div className="text-text-secondary text-xs">
+                          {user.email}
+                        </div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 flex gap-3">
+              <button
+                onClick={handleUpdateTask}
+                disabled={updating}
+                className="from-primary to-primary-dark flex-1 rounded-lg bg-linear-to-r px-6 py-3 font-semibold text-white transition-all hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:hover:scale-100"
+              >
+                {updating ? "Updating..." : "Update Task"}
+              </button>
+              <button
+                onClick={() => {
+                  setShowEditModal(false);
+                  setSelectedTask(null);
+                  setError("");
+                }}
+                disabled={updating}
+                className="border-border bg-card text-text-primary hover:bg-surface dark:border-border-dark dark:bg-card-dark dark:hover:bg-surface-dark flex-1 rounded-lg border px-6 py-3 font-semibold transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Task Confirmation Modal */}
+      {showDeleteConfirm && selectedTask && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="bg-card dark:bg-card-dark w-full max-w-md rounded-2xl p-8 shadow-2xl">
+            <h2 className="text-text-primary text-2xl font-bold">
+              Delete Task?
+            </h2>
+            <p className="text-text-secondary mt-2 text-sm">
+              Are you sure you want to delete "{selectedTask.title}"? This
+              action cannot be undone.
+            </p>
+
+            {error && (
+              <div className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
+                {error}
+              </div>
+            )}
+
+            <div className="mt-8 flex gap-3">
+              <button
+                onClick={handleDeleteTask}
+                disabled={deleting}
+                className="flex-1 rounded-lg bg-red-600 px-6 py-3 font-semibold text-white transition-all hover:bg-red-700 disabled:opacity-50"
+              >
+                {deleting ? "Deleting..." : "Delete Task"}
+              </button>
+              <button
+                onClick={() => {
+                  setShowDeleteConfirm(false);
+                  setSelectedTask(null);
+                  setError("");
+                }}
+                disabled={deleting}
+                className="border-border bg-card text-text-primary hover:bg-surface dark:border-border-dark dark:bg-card-dark dark:hover:bg-surface-dark flex-1 rounded-lg border px-6 py-3 font-semibold transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
