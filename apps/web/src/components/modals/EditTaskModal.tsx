@@ -56,12 +56,17 @@ export function EditTaskModal({
         <div className="mt-6 space-y-4">
           <div>
             <label className="text-text-primary mb-2 block text-sm font-medium">
-              Task Title *
+              Task Title
             </label>
             <input
               type="text"
               value={editTaskTitle}
               onChange={(e) => setEditTaskTitle(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !updating && editTaskTitle.trim()) {
+                  onUpdateTask();
+                }
+              }}
               className="border-border bg-card text-text-primary placeholder-text-secondary/50 focus:border-primary focus:ring-primary/20 dark:border-border-dark dark:bg-card-dark w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
               maxLength={200}
             />
