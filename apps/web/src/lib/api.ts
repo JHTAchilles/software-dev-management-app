@@ -9,6 +9,10 @@ export const API_ENDPOINTS = {
     login: `${API_BASE_URL}/auth/login`,
     me: `${API_BASE_URL}/auth/me`,
   },
+  users: {
+    byEmail: (email: string) =>
+      `${API_BASE_URL}/users/email/${encodeURIComponent(email)}`,
+  },
   projects: {
     list: `${API_BASE_URL}/projects`,
     detail: (id: string) => `${API_BASE_URL}/projects/${id}`,
