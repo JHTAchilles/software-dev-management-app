@@ -24,9 +24,9 @@ export default function AuthenticatedNav() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo/Brand */}
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-text-secondary text-xl font-bold">
-              KanBan Task Manager
+          <Link href="/dashboard" className="flex items-center space-x-2">
+            <span className="text-text-secondary text-2xl font-bold">
+              Task Slayer
             </span>
           </Link>
 
