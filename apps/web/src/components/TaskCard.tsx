@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { FiMoreVertical, FiCalendar, FiUser } from "react-icons/fi";
+import { useDraggable } from "@dnd-kit/core";
+import { FiMoreVertical, FiCalendar, FiUser, FiMove } from "react-icons/fi";
 import { TaskWithAssignees, TaskState } from "@/types";
 import { formatTaskDate } from "@/utils/date";
 
@@ -23,6 +24,21 @@ export function TaskCard({
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: task.id,
+      data: {
+        task,
+        currentState: task.state,
+      },
+    });
+
+  const style = transform
+    ? {
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+      }
+    : undefined;
+
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -41,20 +57,36 @@ export function TaskCard({
   }, [showMenu]);
 
   return (
-    <div className="bg-card dark:bg-card-dark group border-border dark:border-border-dark relative rounded-lg border p-4 shadow-sm transition-all hover:shadow-md">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`bg-card dark:bg-card-dark group border-border dark:border-border-dark relative rounded-lg border p-4 shadow-sm hover:shadow-md ${
+        isDragging ? "cursor-grabbing opacity-0" : "transition-all"
+      }`}
+    >
       <div
         className={`absolute top-0 left-0 h-1 w-full rounded-t-lg bg-linear-to-r ${colorHeader}`}
       />
 
       <div className="mt-2">
         <div className="flex items-start justify-between gap-2">
-          <h4 className="text-text-primary font-semibold wrap-break-word">
+          {/* Drag Handle */}
+          <button
+            {...attributes}
+            {...listeners}
+            className="text-text-secondary hover:text-text-primary shrink-0 cursor-grab touch-none active:cursor-grabbing"
+            aria-label="Drag task"
+          >
+            <FiMove size={18} />
+          </button>
+
+          <h4 className="text-text-primary flex-1 font-semibold wrap-break-word">
             {task.title}
           </h4>
           <div className="relative shrink-0" ref={menuRef}>
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className="text-text-secondary hover:text-text-primary"
+              className="text-text-secondary hover:text-text-primary cursor-pointer"
             >
               <FiMoreVertical size={20} />
             </button>
@@ -91,7 +123,7 @@ export function TaskCard({
                 </button>
                 {(onEditClick || onDeleteClick) && (
                   <>
-                    <div className="border-border dark:border-border-dark my-1 border-t" />
+                    {/* <div className="border-border dark:border-border-dark my-1" /> */}
                     {onEditClick && (
                       <button
                         onClick={() => {

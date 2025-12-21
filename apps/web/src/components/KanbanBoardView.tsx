@@ -1,6 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import {
+  DndContext,
+  DragEndEvent,
+  DragStartEvent,
+  DragOverlay,
+} from "@dnd-kit/core";
 import { FiChevronLeft, FiPlus, FiSettings } from "react-icons/fi";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -49,6 +55,7 @@ export function KanbanBoardView() {
   const [selectedTask, setSelectedTask] = useState<TaskWithAssignees | null>(
     null,
   );
+  const [activeTask, setActiveTask] = useState<TaskWithAssignees | null>(null);
 
   // Loading states
   const [creating, setCreating] = useState(false);
@@ -133,6 +140,39 @@ export function KanbanBoardView() {
 
   const handleUpdateTaskState = async (taskId: string, newState: TaskState) => {
     await updateTaskState(taskId, newState);
+  };
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const taskId = event.active.id as string;
+    const task = tasks.find((t) => t.id === taskId);
+    if (task) {
+      setActiveTask(task);
+    }
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over) {
+      setActiveTask(null);
+      return;
+    }
+
+    const taskId = active.id as string;
+    const newState = over.id as TaskState;
+
+    // Find the task to check if state actually changed
+    const task = tasks.find((t) => t.id === taskId);
+    if (!task || task.state === newState) {
+      setActiveTask(null);
+      return;
+    }
+
+    // Update the task state via API
+    await updateTaskState(taskId, newState);
+
+    // Clear active task after API call completes
+    setActiveTask(null);
   };
 
   const openEditModal = (task: TaskWithAssignees) => {
@@ -475,32 +515,43 @@ export function KanbanBoardView() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            <KanbanColumn
-              title="Scheduled"
-              color="purple"
-              tasks={scheduledTasks}
-              onUpdateState={handleUpdateTaskState}
-              onEditClick={openEditModal}
-              onDeleteClick={openDeleteConfirm}
-            />
-            <KanbanColumn
-              title="In Progress"
-              color="blue"
-              tasks={inProgressTasks}
-              onUpdateState={handleUpdateTaskState}
-              onEditClick={openEditModal}
-              onDeleteClick={openDeleteConfirm}
-            />
-            <KanbanColumn
-              title="Completed"
-              color="green"
-              tasks={completedTasks}
-              onUpdateState={handleUpdateTaskState}
-              onEditClick={openEditModal}
-              onDeleteClick={openDeleteConfirm}
-            />
-          </div>
+          <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              <KanbanColumn
+                title="Scheduled"
+                color="purple"
+                tasks={scheduledTasks}
+                onUpdateState={handleUpdateTaskState}
+                onEditClick={openEditModal}
+                onDeleteClick={openDeleteConfirm}
+              />
+              <KanbanColumn
+                title="In Progress"
+                color="blue"
+                tasks={inProgressTasks}
+                onUpdateState={handleUpdateTaskState}
+                onEditClick={openEditModal}
+                onDeleteClick={openDeleteConfirm}
+              />
+              <KanbanColumn
+                title="Completed"
+                color="green"
+                tasks={completedTasks}
+                onUpdateState={handleUpdateTaskState}
+                onEditClick={openEditModal}
+                onDeleteClick={openDeleteConfirm}
+              />
+            </div>
+            <DragOverlay dropAnimation={null}>
+              {activeTask ? (
+                <div className="bg-card dark:bg-card-dark border-border dark:border-border-dark cursor-grabbing rounded-lg border p-4 opacity-90 shadow-xl">
+                  <div className="text-text-primary font-semibold">
+                    {activeTask.title}
+                  </div>
+                </div>
+              ) : null}
+            </DragOverlay>
+          </DndContext>
         )}
       </div>
 

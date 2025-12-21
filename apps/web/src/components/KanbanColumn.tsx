@@ -1,5 +1,6 @@
 "use client";
 
+import { useDroppable } from "@dnd-kit/core";
 import { TaskWithAssignees, TaskState } from "@/types";
 import { TaskCard } from "./TaskCard";
 
@@ -20,6 +21,18 @@ export function KanbanColumn({
   onEditClick,
   onDeleteClick,
 }: KanbanColumnProps) {
+  // Map title to TaskState enum
+  const columnState: TaskState =
+    title === "Scheduled"
+      ? TaskState.SCHEDULED
+      : title === "In Progress"
+        ? TaskState.IN_PROGRESS
+        : TaskState.COMPLETED;
+
+  const { setNodeRef, isOver } = useDroppable({
+    id: columnState,
+  });
+
   const colorClasses = {
     purple: {
       bg: "bg-purple-500/10 dark:bg-purple-500/20",
@@ -44,7 +57,12 @@ export function KanbanColumn({
   const colors = colorClasses[color];
 
   return (
-    <div className={`rounded-xl ${colors.bg} ${colors.border} border p-4`}>
+    <div
+      ref={setNodeRef}
+      className={`rounded-xl ${colors.bg} ${colors.border} border p-4 transition-all ${
+        isOver ? "ring-2 ring-blue-500" : ""
+      }`}
+    >
       <div className="mb-4 flex items-center justify-between">
         <h3 className={`text-lg font-bold ${colors.text}`}>{title}</h3>
         <span
