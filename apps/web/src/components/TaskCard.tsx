@@ -48,8 +48,10 @@ export function TaskCard({
 
       <div className="mt-2">
         <div className="flex items-start justify-between gap-2">
-          <h4 className="text-text-primary font-semibold">{task.title}</h4>
-          <div className="relative" ref={menuRef}>
+          <h4 className="text-text-primary font-semibold wrap-break-word">
+            {task.title}
+          </h4>
+          <div className="relative shrink-0" ref={menuRef}>
             <button
               onClick={() => setShowMenu(!showMenu)}
               className="text-text-secondary hover:text-text-primary"
@@ -59,7 +61,7 @@ export function TaskCard({
 
             {/* Dropdown menu */}
             {showMenu && (
-              <div className="bg-card dark:bg-card-dark border-border dark:border-border-dark absolute top-6 right-0 z-10 w-48 rounded-lg border shadow-xl">
+              <div className="bg-card dark:bg-card-dark border-border dark:border-border-dark absolute top-6 right-0 z-10 w-40 rounded-lg border shadow-xl sm:w-48">
                 <button
                   onClick={() => {
                     onUpdateState(task.id, TaskState.SCHEDULED);
