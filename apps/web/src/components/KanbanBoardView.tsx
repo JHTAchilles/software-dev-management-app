@@ -401,7 +401,7 @@ export function KanbanBoardView() {
     try {
       setDeleting(true);
       await deleteProject();
-      router.push("/dashboard2");
+      router.push("/dashboard");
     } finally {
       setDeleting(false);
     }
