@@ -92,12 +92,12 @@ export default function Login() {
                 />
                 <span className="text-text-secondary">Remember me</span>
               </label>
-              <Link
+              {/* <Link
                 href="/forgot-password"
                 className="text-primary hover:text-primary-dark"
               >
                 Forgot password?
-              </Link>
+              </Link> */}
             </div>
 
             <button
