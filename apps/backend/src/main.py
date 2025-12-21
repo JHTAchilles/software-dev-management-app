@@ -41,11 +41,10 @@ app.add_middleware(
 
 # Include routers
 app.include_router(auth.router)
-if settings.DEBUG:
-    app.include_router(users.router)
+app.include_router(users.router)
+app.include_router(license_keys.router)
 app.include_router(projects.router)
 app.include_router(tasks.router)
-app.include_router(license_keys.router)
 
 
 @app.get("/", tags=["Root"])

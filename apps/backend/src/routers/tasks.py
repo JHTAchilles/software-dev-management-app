@@ -141,7 +141,6 @@ async def get_my_assigned_tasks(
 ):
     """
     Get all tasks assigned to the current user across all projects.
-
     - **state**: optional filter by task state (scheduled, in_progress, completed)
     """
     # Build query to get tasks assigned to current user

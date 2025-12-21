@@ -27,7 +27,7 @@ def generate_license_key() -> str:
 
 
 async def create_license_keys(count: int = 10):
-    """Create and insert license keys to database"""
+    """Create specified number of license keys"""
     # Ensure database tables exist
     await create_db_and_tables()
 
@@ -60,12 +60,12 @@ async def create_license_keys(count: int = 10):
         # Commit all keys
         await db.commit()
 
-        print(f"\nSuccessfully created {len(created_keys)} license keys!")
+        print(f"\n✅ Successfully created {len(created_keys)} license keys!")
         print("\nGenerated keys:")
         for key in created_keys:
             print(f"  - {key}")
 
-        break
+        break  # Exit after first session
 
 
 if __name__ == "__main__":
