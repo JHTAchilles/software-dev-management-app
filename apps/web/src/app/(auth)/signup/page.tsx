@@ -10,6 +10,7 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [licenseKey, setLicenseKey] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,6 +19,11 @@ export default function Signup() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (!licenseKey || !licenseKey.trim()) {
+      setError("License key is required");
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError("Passwords do not match");
@@ -32,7 +38,12 @@ export default function Signup() {
     setLoading(true);
 
     try {
-      await register({ username, email, password });
+      await register({
+        username,
+        email,
+        password,
+        license_key: licenseKey.toUpperCase(),
+      });
     } catch (err: any) {
       setError(err.message || "Registration failed. Please try again.");
     } finally {
@@ -98,6 +109,30 @@ export default function Signup() {
                 placeholder="Enter your email"
                 className="border-border bg-card text-text-primary placeholder-text-secondary/50 focus:border-primary focus:ring-primary/20 dark:border-border-dark dark:bg-card-dark w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none disabled:opacity-50"
               />
+            </div>
+
+            <div>
+              <label
+                htmlFor="licenseKey"
+                className="text-text-primary mb-2 block text-sm font-medium"
+              >
+                License Key
+              </label>
+              <input
+                id="licenseKey"
+                type="text"
+                value={licenseKey}
+                onChange={(e) => setLicenseKey(e.target.value.toUpperCase())}
+                required
+                disabled={loading}
+                placeholder="AAAA-BBBB-CCCC-DDDD"
+                maxLength={19}
+                pattern="[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}"
+                className="border-border bg-card text-text-primary placeholder-text-secondary/50 focus:border-primary focus:ring-primary/20 dark:border-border-dark dark:bg-card-dark w-full rounded-lg border px-4 py-3 font-mono text-sm uppercase transition-colors focus:ring-2 focus:outline-none disabled:opacity-50"
+              />
+              <p className="text-text-secondary mt-1 text-xs">
+                Enter your license key to create an account
+              </p>
             </div>
 
             <div>

@@ -20,6 +20,7 @@ export interface RegisterRequest {
   username: string;
   email: string;
   password: string;
+  license_key: string;
 }
 
 export interface Project {
