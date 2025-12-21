@@ -1,12 +1,14 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.sql import func
 
 from src.db.database import get_async_session
 from src.schemas.user import UserCreate, UserResponse, Token
 from src.models.user import User
+from src.models.license_key import LicenseKey
 from src.utils.security import (
     get_password_hash,
     authenticate_user,
@@ -31,7 +33,33 @@ async def register(
     - **username**: unique username (3-50 characters)
     - **email**: valid email address
     - **password**: password (minimum 6 characters)
+    - **license_key**: valid license key required for registration
     """
+    # Validate license key
+    if not user_data.license_key or not user_data.license_key.strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="License key is required",
+        )
+
+    # Check if license key exists and is active
+    license_result = await db.execute(
+        select(LicenseKey).where(LicenseKey.key == user_data.license_key.upper())
+    )
+    license_key = license_result.scalar_one_or_none()
+
+    if not license_key:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid license key",
+        )
+
+    if not license_key.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid license key",
+        )
+
     # Check if username already exists
     result = await db.execute(select(User).where(User.username == user_data.username))
     if result.scalar_one_or_none():
@@ -60,6 +88,12 @@ async def register(
     db.add(db_user)
     await db.commit()
     await db.refresh(db_user)
+
+    # Mark license key as used
+    license_key.is_active = False  # type: ignore[assignment]
+    license_key.used_at = datetime.now()  # type: ignore[assignment]
+    license_key.used_by_user_id = db_user.id  # type: ignore[assignment]
+    await db.commit()
 
     return db_user
 

@@ -10,6 +10,7 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=6, max_length=100)
+    license_key: str = Field(..., description="License key required for registration")
 
 
 class UserLogin(BaseModel):

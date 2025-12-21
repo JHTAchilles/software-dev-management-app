@@ -162,6 +162,7 @@ async def get_my_assigned_tasks(
                 detail="Invalid task state filter",
             )
 
+    # sorted by closest due date first
     result = await db.execute(query.order_by(Task.due_date.asc().nullslast()))
     tasks = result.scalars().all()
 
@@ -388,7 +389,7 @@ async def unassign_user_from_task(
     if user_to_unassign not in task.assignees:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User is not assigned to this tasl",
+            detail="User is not assigned to this task",
         )
 
     # Unassign user from task
