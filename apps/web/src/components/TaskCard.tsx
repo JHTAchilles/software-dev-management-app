@@ -2,7 +2,13 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useDraggable } from "@dnd-kit/core";
-import { FiMoreVertical, FiCalendar, FiUser, FiMove } from "react-icons/fi";
+import {
+  FiMoreVertical,
+  FiCalendar,
+  FiUser,
+  FiMove,
+  FiTrash2,
+} from "react-icons/fi";
 import { TaskWithAssignees, TaskState } from "@/types";
 import { formatTaskDate } from "@/utils/date";
 
@@ -84,71 +90,13 @@ export function TaskCard({
             {task.title}
           </h4>
           <div className="relative shrink-0" ref={menuRef}>
-            <button
-              onClick={() => setShowMenu(!showMenu)}
-              className="text-text-secondary hover:text-text-primary cursor-pointer"
-            >
-              <FiMoreVertical size={20} />
-            </button>
-
-            {/* Dropdown menu */}
-            {showMenu && (
-              <div className="bg-card dark:bg-card-dark border-border dark:border-border-dark absolute top-6 right-0 z-10 w-40 rounded-lg border shadow-xl sm:w-48">
-                <button
-                  onClick={() => {
-                    onUpdateState(task.id, TaskState.SCHEDULED);
-                    setShowMenu(false);
-                  }}
-                  className="hover:bg-surface dark:hover:bg-surface-dark text-text-primary w-full rounded-t-lg px-4 py-2 text-left text-sm"
-                >
-                  Move to Scheduled
-                </button>
-                <button
-                  onClick={() => {
-                    onUpdateState(task.id, TaskState.IN_PROGRESS);
-                    setShowMenu(false);
-                  }}
-                  className="hover:bg-surface dark:hover:bg-surface-dark text-text-primary w-full px-4 py-2 text-left text-sm"
-                >
-                  Move to In Progress
-                </button>
-                <button
-                  onClick={() => {
-                    onUpdateState(task.id, TaskState.COMPLETED);
-                    setShowMenu(false);
-                  }}
-                  className="hover:bg-surface dark:hover:bg-surface-dark text-text-primary w-full px-4 py-2 text-left text-sm"
-                >
-                  Move to Completed
-                </button>
-                {(onEditClick || onDeleteClick) && (
-                  <>
-                    {/* <div className="border-border dark:border-border-dark my-1" /> */}
-                    {onEditClick && (
-                      <button
-                        onClick={() => {
-                          onEditClick(task);
-                          setShowMenu(false);
-                        }}
-                        className="hover:bg-surface dark:hover:bg-surface-dark text-text-primary w-full px-4 py-2 text-left text-sm"
-                      >
-                        Edit Task
-                      </button>
-                    )}
-                    {onDeleteClick && (
-                      <button
-                        onClick={() => {
-                          onDeleteClick(task);
-                          setShowMenu(false);
-                        }}
-                        className="hover:bg-surface dark:hover:bg-surface-dark w-full rounded-b-lg px-4 py-2 text-left text-sm text-red-600 dark:text-red-400"
-                      >
-                        Delete Task
-                      </button>
-                    )}
-                  </>
-                )}
-              </div>
+            {onEditClick && (
+              <button
+                onClick={() => onEditClick(task)}
+                className="text-text-secondary hover:text-text-primary cursor-pointer"
+              >
+                <FiMoreVertical size={20} />
+              </button>
             )}
           </div>
         </div>
@@ -161,32 +109,69 @@ export function TaskCard({
 
         <div className="mt-3 space-y-2">
           {task.due_date && (
-            <div className="text-text-secondary flex items-center gap-2 text-xs">
+            <div
+              className={`flex items-center gap-2 text-xs ${
+                new Date(task.due_date) < new Date() &&
+                task.state !== TaskState.COMPLETED
+                  ? "text-red-600 dark:text-red-400"
+                  : new Date(task.due_date).getTime() - new Date().getTime() <
+                        24 * 60 * 60 * 1000 &&
+                      new Date(task.due_date) > new Date() &&
+                      task.state !== TaskState.COMPLETED
+                    ? "text-yellow-600 dark:text-yellow-400"
+                    : "text-text-secondary"
+              }`}
+            >
               <FiCalendar size={16} />
               <span>{formatTaskDate(task.due_date)}</span>
             </div>
           )}
 
-          {task.assignees && task.assignees.length > 0 && (
-            <div className="flex items-center gap-2">
-              <FiUser className="text-text-secondary" size={16} />
-              <div className="flex -space-x-2">
-                {task.assignees.slice(0, 3).map((assignee) => (
-                  <div
-                    key={assignee.id}
-                    className="from-primary to-primary-dark ring-card dark:ring-card-dark flex h-6 w-6 items-center justify-center rounded-full bg-linear-to-r text-xs font-semibold text-white ring-2"
-                    title={assignee.username}
-                  >
-                    {(assignee.username?.[0] || "?").toUpperCase()}
-                  </div>
-                ))}
-                {task.assignees.length > 3 && (
-                  <div className="bg-surface dark:bg-surface-dark text-text-secondary ring-card dark:ring-card-dark flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ring-2">
-                    +{task.assignees.length - 3}
-                  </div>
-                )}
+          {task.assignees && task.assignees.length > 0 ? (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <FiUser className="text-text-secondary" size={16} />
+                <div className="flex -space-x-2">
+                  {task.assignees.slice(0, 3).map((assignee) => (
+                    <div
+                      key={assignee.id}
+                      className="from-primary to-primary-dark ring-card dark:ring-card-dark flex h-6 w-6 items-center justify-center rounded-full bg-linear-to-r text-xs font-semibold text-white ring-2"
+                      title={assignee.username}
+                    >
+                      {(assignee.username?.[0] || "?").toUpperCase()}
+                    </div>
+                  ))}
+                  {task.assignees.length > 3 && (
+                    <div className="bg-surface dark:bg-surface-dark text-text-secondary ring-card dark:ring-card-dark flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ring-2">
+                      +{task.assignees.length - 3}
+                    </div>
+                  )}
+                </div>
               </div>
+              {onDeleteClick && (
+                <button
+                  onClick={() => {
+                    onDeleteClick(task);
+                  }}
+                  className="text-text-secondary hover:text-text-primary cursor-pointer"
+                >
+                  <FiTrash2 />
+                </button>
+              )}
             </div>
+          ) : (
+            onDeleteClick && (
+              <div className="flex justify-end">
+                <button
+                  onClick={() => {
+                    onDeleteClick(task);
+                  }}
+                  className="text-text-secondary hover:text-text-primary cursor-pointer"
+                >
+                  <FiTrash2 />
+                </button>
+              </div>
+            )
           )}
         </div>
       </div>
