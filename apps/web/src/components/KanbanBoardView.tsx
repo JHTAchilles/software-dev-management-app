@@ -91,6 +91,14 @@ export function KanbanBoardView() {
         router.push("/404");
       }
     });
+
+    // Set up polling - refresh every 10 seconds (silent mode)
+    const interval = setInterval(() => {
+      fetchProjectAndTasks(true).catch(console.error);
+    }, 10000);
+
+    // Clean up interval on unmount
+    return () => clearInterval(interval);
   }, [projectId]);
 
   // ============================================================================

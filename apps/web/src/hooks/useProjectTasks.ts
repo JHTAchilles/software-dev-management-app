@@ -15,11 +15,13 @@ export function useProjectTasks(projectId: string) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchProjectAndTasks = async () => {
+  const fetchProjectAndTasks = async (silent = false) => {
     if (!projectId) return;
 
     try {
-      setLoading(true);
+      if (!silent) {
+        setLoading(true);
+      }
       setError("");
 
       // Fetch project details
@@ -38,7 +40,9 @@ export function useProjectTasks(projectId: string) {
       console.error("Error fetching data:", err);
       throw err;
     } finally {
-      setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
   };
 
