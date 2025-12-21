@@ -3,9 +3,16 @@
 import { FiMenu, FiX, FiTrello } from "react-icons/fi";
 import Link from "next/link";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
+
+  // Don't show normal nav if user is authenticated
+  if (isAuthenticated) {
+    return null;
+  }
 
   return (
     <nav className="border-border bg-card/80 sticky top-0 z-50 border-b backdrop-blur-xl">

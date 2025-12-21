@@ -2,12 +2,20 @@
 
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePathname } from "next/navigation";
 import { FiLogOut, FiUser } from "react-icons/fi";
 
 export default function AuthenticatedNav() {
   const { user, logout, isAuthenticated } = useAuth();
+  const pathname = usePathname();
 
-  if (!isAuthenticated || !user) {
+  // Only show nav on homepage, dashboard, and project pages when authenticated
+  const shouldShowNav =
+    pathname === "/" ||
+    pathname?.startsWith("/dashboard") ||
+    pathname?.startsWith("/project");
+
+  if (!isAuthenticated || !user || !shouldShowNav) {
     return null;
   }
 
@@ -16,8 +24,10 @@ export default function AuthenticatedNav() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo/Brand */}
-          <Link href="/dashboard" className="flex items-center space-x-2">
-            <span className="text-primary text-xl font-bold">TaskManager</span>
+          <Link href="/" className="flex items-center space-x-2">
+            <span className="text-text-secondary text-xl font-bold">
+              KanBan Task Manager
+            </span>
           </Link>
 
           {/* Navigation Links */}
@@ -27,12 +37,6 @@ export default function AuthenticatedNav() {
               className="text-text-secondary hover:text-text-primary transition-colors"
             >
               Dashboard
-            </Link>
-            <Link
-              href="/project"
-              className="text-text-secondary hover:text-text-primary transition-colors"
-            >
-              Projects
             </Link>
 
             {/* User Menu */}
