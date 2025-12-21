@@ -84,7 +84,7 @@ export default function Login() {
               />
             </div>
 
-            <div className="flex items-center justify-between text-sm">
+            {/* <div className="flex items-center justify-between text-sm">
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -92,13 +92,22 @@ export default function Login() {
                 />
                 <span className="text-text-secondary">Remember me</span>
               </label>
-              {/* <Link
+              <Link
                 href="/forgot-password"
                 className="text-primary hover:text-primary-dark"
               >
                 Forgot password?
-              </Link> */}
-            </div>
+              </Link>
+            </div> */}
+
+            {/* Error Message */}
+            {error ? (
+              <div className="mt-4 rounded-lg bg-red-50 p-3 text-center text-sm font-medium text-red-600 dark:bg-red-900/20 dark:text-red-400">
+                {error}
+              </div>
+            ) : (
+              <div className="mt-4 min-h-1"></div>
+            )}
 
             <button
               type="submit"
