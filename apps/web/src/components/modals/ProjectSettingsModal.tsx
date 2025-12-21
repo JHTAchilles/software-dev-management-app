@@ -104,12 +104,21 @@ export function ProjectSettingsModal({
             <div className="space-y-4">
               <div>
                 <label className="text-text-primary mb-2 block text-sm font-medium">
-                  Project Title *
+                  Project Title
                 </label>
                 <input
                   type="text"
                   value={editProjectTitle}
                   onChange={(e) => setEditProjectTitle(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (
+                      e.key === "Enter" &&
+                      !updating &&
+                      editProjectTitle.trim()
+                    ) {
+                      onUpdateProject();
+                    }
+                  }}
                   className="border-border bg-card text-text-primary placeholder-text-secondary/50 focus:border-primary focus:ring-primary/20 dark:border-border-dark dark:bg-card-dark w-full rounded-lg border px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
                   maxLength={200}
                 />

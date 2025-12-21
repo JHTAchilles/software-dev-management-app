@@ -213,6 +213,7 @@ export function KanbanBoardView() {
       alert("Project updated successfully!");
     } finally {
       setUpdating(false);
+      setShowProjectSettings(false);
     }
   };
 
@@ -404,20 +405,20 @@ export function KanbanBoardView() {
       {/* Header */}
       <div className="border-border bg-card/50 dark:border-border-dark dark:bg-card-dark/50 border-b backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-6 py-6">
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex items-center justify-between gap-6">
+            <div className="flex-1">
               <div className="flex items-center gap-3">
                 <Link
                   href="/dashboard"
                   className="text-text-secondary hover:text-text-primary"
                 >
-                  <FiChevronLeft size={28} />
+                  <FiChevronLeft size={32} />
                 </Link>
-                <div>
+                <div className="flex-1">
                   <h1 className="text-text-primary text-3xl font-bold">
                     {loading ? "Loading..." : project?.title || "Project"}
                   </h1>
-                  <p className="text-text-secondary mt-1 text-sm">
+                  <p className="text-text-secondary mt-1 max-h-12 overflow-y-auto text-sm whitespace-pre-wrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                     {loading
                       ? "Loading project details..."
                       : project?.description || "No description"}
@@ -425,7 +426,7 @@ export function KanbanBoardView() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex shrink-0 items-center gap-3">
               <button
                 onClick={openProjectSettings}
                 className="text-text-secondary hover:text-text-primary hover:bg-surface dark:hover:bg-surface-dark rounded-lg p-3 transition-all"
