@@ -72,7 +72,7 @@ async def get_my_projects(
 
 @router.get("/{project_id}", response_model=ProjectWithUsers)
 async def get_project(
-    project_id: str,
+    project_id: uuid.UUID,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
 ):
@@ -105,7 +105,7 @@ async def get_project(
 
 @router.put("/{project_id}", response_model=ProjectResponse)
 async def update_project(
-    project_id: str,
+    project_id: uuid.UUID,
     project_data: ProjectUpdate,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
@@ -149,7 +149,7 @@ async def update_project(
 
 @router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_project(
-    project_id: str,
+    project_id: uuid.UUID,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
 ):
@@ -187,7 +187,7 @@ async def delete_project(
 
 @router.post("/{project_id}/users/{user_id}", response_model=ProjectWithUsers)
 async def add_user_to_project(
-    project_id: str,
+    project_id: uuid.UUID,
     user_id: uuid.UUID,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
@@ -236,14 +236,19 @@ async def add_user_to_project(
     # Add user to project
     project.users.append(user_to_add)
     await db.commit()
-    await db.refresh(project)
+    result = await db.execute(
+        select(Project)
+        .options(selectinload(Project.users))
+        .where(Project.id == project_id)
+    )
+    project = result.scalar_one()
 
     return project
 
 
 @router.delete("/{project_id}/users/{user_id}", response_model=ProjectWithUsers)
 async def remove_user_from_project(
-    project_id: str,
+    project_id: uuid.UUID,
     user_id: uuid.UUID,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
@@ -300,6 +305,11 @@ async def remove_user_from_project(
     # Remove user from project
     project.users.remove(user_to_remove)
     await db.commit()
-    await db.refresh(project)
+    result = await db.execute(
+        select(Project)
+        .options(selectinload(Project.users))
+        .where(Project.id == project_id)
+    )
+    project = result.scalar_one()
 
     return project

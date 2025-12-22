@@ -32,6 +32,12 @@ class LicenseKeyValidate(BaseModel):
     key: str
 
 
+class LicenseKeyValidationResponse(BaseModel):
+    """Response for license key validation."""
+
+    valid: bool
+
+
 class LicenseKeyResponse(LicenseKeyBase):
     """Schema for license key response"""
 

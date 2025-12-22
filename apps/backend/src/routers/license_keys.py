@@ -11,6 +11,8 @@ from src.schemas.license_key import (
     LicenseKeyCreate,
     LicenseKeyResponse,
     LicenseKeyActivate,
+    LicenseKeyValidate,
+    LicenseKeyValidationResponse,
 )
 from src.models.user import User
 from src.utils.security import get_current_user
@@ -91,6 +93,34 @@ async def create_custom_license_key(
     await db.refresh(license_key)
 
     return license_key
+
+
+@router.post("/validate", response_model=LicenseKeyValidationResponse)
+async def validate_license_key(
+    payload: LicenseKeyValidate,
+    db: AsyncSession = Depends(get_async_session),
+):
+    """Validate that a license key exists and is active/unused.
+
+    This endpoint is intentionally unauthenticated to support pre-registration checks.
+    """
+    key = (payload.key or "").strip().upper()
+    if not key:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="License key is required",
+        )
+
+    result = await db.execute(select(LicenseKey).where(LicenseKey.key == key))
+    license_key = result.scalar_one_or_none()
+
+    if not license_key or not license_key.is_active or license_key.used_by_user_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid license key",
+        )
+
+    return {"valid": True}
 
 
 @router.get("/", response_model=List[LicenseKeyResponse])

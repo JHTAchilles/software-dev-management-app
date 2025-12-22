@@ -119,13 +119,14 @@ async def get_project_tasks(
 
     # Apply state filter if provided
     if state:
-        if state in ModelTaskState:
-            query = query.where(Task.state == state)
-        else:
+        try:
+            state_enum = ModelTaskState(state)
+        except ValueError:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid task state filter",
             )
+        query = query.where(Task.state == state_enum)
 
     result = await db.execute(query.order_by(Task.created_at.desc()))
     tasks = result.scalars().all()
@@ -153,13 +154,14 @@ async def get_my_assigned_tasks(
 
     # Apply state filter if provided
     if state:
-        if state in ModelTaskState:
-            query = query.where(Task.state == state)
-        else:
+        try:
+            state_enum = ModelTaskState(state)
+        except ValueError:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid task state filter",
             )
+        query = query.where(Task.state == state_enum)
 
     # sorted by closest due date first
     result = await db.execute(query.order_by(Task.due_date.asc().nullslast()))
@@ -339,7 +341,10 @@ async def assign_user_to_task(
     # Assign user to task
     task.assignees.append(user_to_assign)
     await db.commit()
-    await db.refresh(task)
+    result = await db.execute(
+        select(Task).options(selectinload(Task.assignees)).where(Task.id == task_id)
+    )
+    task = result.scalar_one()
 
     return task
 
@@ -394,6 +399,9 @@ async def unassign_user_from_task(
     # Unassign user from task
     task.assignees.remove(user_to_unassign)
     await db.commit()
-    await db.refresh(task)
+    result = await db.execute(
+        select(Task).options(selectinload(Task.assignees)).where(Task.id == task_id)
+    )
+    task = result.scalar_one()
 
     return task
