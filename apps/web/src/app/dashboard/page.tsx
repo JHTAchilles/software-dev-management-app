@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 
-import { useAuth } from "@/contexts/AuthContext";
 import { apiGet, apiPost } from "@/lib/apiClient";
 import { API_ENDPOINTS } from "@/lib/api";
 import { Project, CreateProjectRequest, Task } from "@/types";
@@ -22,7 +21,6 @@ export default function Dashboard() {
   const [newProjectTitle, setNewProjectTitle] = useState("");
   const [newProjectDescription, setNewProjectDescription] = useState("");
   const [creating, setCreating] = useState(false);
-  const { user } = useAuth();
 
   // Fetch projects on component mount
   useEffect(() => {

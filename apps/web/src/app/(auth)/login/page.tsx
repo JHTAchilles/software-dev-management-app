@@ -9,7 +9,6 @@ export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
@@ -84,7 +83,8 @@ export default function Login() {
               />
             </div>
 
-            {/* <div className="flex items-center justify-between text-sm">
+            {/* logic for remember me and forgot password is not implemented yet*/}
+            {/*<div className="flex items-center justify-between text-sm">
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -116,13 +116,6 @@ export default function Login() {
               Sign In
             </button>
           </form>
-
-          {/* Message */}
-          {message && (
-            <div className="mt-4 rounded-lg bg-green-50 p-3 text-center text-sm font-medium text-green-600 dark:bg-green-900/20 dark:text-green-400">
-              {message}
-            </div>
-          )}
 
           {/* Footer */}
           <div className="text-text-secondary mt-6 text-center text-sm">

@@ -12,7 +12,6 @@ export default function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [licenseKey, setLicenseKey] = useState("");
   const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
 
@@ -199,13 +198,6 @@ export default function Signup() {
           {error && (
             <div className="mt-4 rounded-lg bg-red-50 p-3 text-center text-sm font-medium text-red-600 dark:bg-red-900/20 dark:text-red-400">
               {error}
-            </div>
-          )}
-
-          {/* Success Message */}
-          {message && (
-            <div className="mt-4 rounded-lg bg-green-50 p-3 text-center text-sm font-medium text-green-600 dark:bg-green-900/20 dark:text-green-400">
-              {message}
             </div>
           )}
 

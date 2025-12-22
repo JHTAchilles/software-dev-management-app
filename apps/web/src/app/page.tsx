@@ -42,8 +42,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
-      {/* TODO: Features Section? */}
     </div>
   );
 }
