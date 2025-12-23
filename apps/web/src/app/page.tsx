@@ -11,10 +11,10 @@ export default function Home() {
           <div className="text-center">
             {/* Heading */}
             <h1 className="text-text-primary mb-6 text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl">
-              Software Dev
+              Task Slayer
               <br />
-              <span className="from-primary to-primary-dark bg-linear-to-r bg-clip-text text-transparent">
-                Kanban Manager
+              <span className="from-primary to-primary-dark bg-linear-to-r bg-clip-text text-5xl text-transparent">
+                Software Dev Kanban Manager
               </span>
             </h1>
 

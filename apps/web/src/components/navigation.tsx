@@ -24,7 +24,7 @@ export default function Navigation() {
               <FiTrello size={24} />
             </div>
             <span className="text-text-primary text-lg font-bold">
-              Kanban Manager
+              Task Slayer
             </span>
           </Link>
 
