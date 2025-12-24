@@ -4,6 +4,13 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 
+/**
+ * Guards a route segment behind authentication.
+ *
+ * - While auth state is loading: renders a full-page spinner
+ * - When unauthenticated: redirects to `/login` and renders nothing
+ * - When authenticated: renders children
+ */
 export default function ProtectedRoute({
   children,
 }: {

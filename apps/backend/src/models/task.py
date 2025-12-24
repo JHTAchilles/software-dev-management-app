@@ -1,3 +1,8 @@
+"""Task ORM model.
+
+Defines task state, assignee association table, and the `Task` entity.
+"""
+
 from sqlalchemy import (
     String,
     DateTime,
@@ -21,6 +26,8 @@ if TYPE_CHECKING:
 
 # Enum for task state
 class TaskState(str, enum.Enum):
+    """Allowed task states stored in the database."""
+
     SCHEDULED = "scheduled"
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
@@ -37,6 +44,11 @@ task_assignees = Table(
 
 
 class Task(Base):
+    """Database model for a task.
+
+    A task belongs to one project and can be assigned to many users.
+    """
+
     __tablename__ = "tasks"
 
     id: Mapped[uuid.UUID] = mapped_column(

@@ -1,3 +1,5 @@
+"""Pydantic schemas for license key creation/validation."""
+
 from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
 from typing import Optional
@@ -6,12 +8,15 @@ import re
 
 
 class LicenseKeyBase(BaseModel):
+    """Common fields shared by license-key request/response schemas."""
+
     key: str = Field(..., description="License key in format AAAA-BBBB-CCCC-DDDD")
 
     @field_validator("key")
     @classmethod
     def validate_key_format(cls, v: str) -> str:
-        # Validate format: AAAA-BBBB-CCCC-DDDD (4 groups of 4 alphanumeric characters)
+        """Validate that the key matches `AAAA-BBBB-CCCC-DDDD` (uppercase alnum)."""
+
         pattern = r"^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$"
         if not re.match(pattern, v):
             raise ValueError(

@@ -1,4 +1,11 @@
+/**
+ * Shared TypeScript types for the web client.
+ *
+ * Mirrors backend API payloads (snake_case keys) for consistency.
+ */
+
 export interface User {
+  /** User UUID. */
   id: string;
   username: string;
   email: string;
@@ -7,6 +14,7 @@ export interface User {
 }
 
 export interface AuthTokens {
+  /** JWT access token. */
   access_token: string;
   token_type: string;
 }
@@ -20,6 +28,7 @@ export interface RegisterRequest {
   username: string;
   email: string;
   password: string;
+  /** License key required to register (AAAA-BBBB-CCCC-DDDD). */
   license_key: string;
 }
 
@@ -64,8 +73,11 @@ export interface TaskWithDetails extends TaskWithAssignees {
 }
 
 export enum TaskState {
+  /** Not started / planned. */
   SCHEDULED = "scheduled",
+  /** Currently being worked on. */
   IN_PROGRESS = "in_progress",
+  /** Finished. */
   COMPLETED = "completed",
 }
 
@@ -95,5 +107,6 @@ export interface UpdateProjectRequest {
 }
 
 export interface ApiError {
+  /** Error message produced by the backend (FastAPI `detail`). */
   detail: string;
 }

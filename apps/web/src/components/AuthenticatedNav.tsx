@@ -5,6 +5,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { usePathname } from "next/navigation";
 import { FiLogOut, FiUser } from "react-icons/fi";
 
+/**
+ * Top navigation shown only for authenticated users.
+ *
+ * Hides itself on routes where the authenticated layout is not desired.
+ */
 export default function AuthenticatedNav() {
   const { user, logout, isAuthenticated } = useAuth();
   const pathname = usePathname();

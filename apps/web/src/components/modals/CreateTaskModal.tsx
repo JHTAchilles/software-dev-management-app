@@ -18,6 +18,12 @@ interface CreateTaskModalProps {
   onClose: () => void;
 }
 
+/**
+ * Modal dialog for creating a new task.
+ *
+ * This component is “controlled”: all form state is passed in and updated via
+ * callbacks so the parent owns the source of truth.
+ */
 export function CreateTaskModal({
   projectTitle,
   newTaskTitle,

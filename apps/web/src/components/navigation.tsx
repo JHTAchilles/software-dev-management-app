@@ -5,6 +5,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 
+/**
+ * Public navigation shown only when unauthenticated.
+ *
+ * Includes a responsive mobile menu.
+ */
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated } = useAuth();
@@ -64,7 +69,7 @@ export default function Navigation() {
               >
                 Sign In
               </Link>
-              <Link href="/signup2" onClick={() => setIsMenuOpen(false)}>
+              <Link href="/signup" onClick={() => setIsMenuOpen(false)}>
                 <button className="from-primary to-primary-dark w-full rounded-lg bg-linear-to-r px-4 py-2 text-sm font-semibold text-white">
                   Get Started
                 </button>

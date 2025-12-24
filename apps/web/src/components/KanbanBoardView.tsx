@@ -1,5 +1,15 @@
 "use client";
 
+/**
+ * Full project Kanban board.
+ *
+ * Responsibilities:
+ * - Fetch project + tasks (via `useProjectTasks`)
+ * - Render columns and task cards
+ * - Handle task CRUD + assignment via modals
+ * - Handle drag-and-drop state transitions
+ */
+
 import { useState, useEffect } from "react";
 import {
   DndContext,
@@ -112,6 +122,9 @@ export function KanbanBoardView() {
   // EVENT HANDLERS
   // ============================================================================
 
+  /**
+   * Creates a task using current form state and resets the modal.
+   */
   const handleCreateTask = async () => {
     if (!newTaskTitle.trim() || !projectId) {
       setError("Task title is required");
@@ -138,10 +151,16 @@ export function KanbanBoardView() {
     }
   };
 
+  /**
+   * Updates a task’s state (used by both DnD and UI actions).
+   */
   const handleUpdateTaskState = async (taskId: string, newState: TaskState) => {
     await updateTaskState(taskId, newState);
   };
 
+  /**
+   * DnD handler: captures the currently dragged task for the overlay.
+   */
   const handleDragStart = (event: DragStartEvent) => {
     const taskId = event.active.id as string;
     const task = tasks.find((t) => t.id === taskId);
@@ -150,6 +169,9 @@ export function KanbanBoardView() {
     }
   };
 
+  /**
+   * DnD handler: if dropped over a new column, persists the state change.
+   */
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -175,6 +197,9 @@ export function KanbanBoardView() {
     setActiveTask(null);
   };
 
+  /**
+   * Opens the Edit Task modal and initializes form state from the selected task.
+   */
   const openEditModal = (task: TaskWithAssignees) => {
     setSelectedTask(task);
     setEditTaskTitle(task.title);
@@ -188,6 +213,9 @@ export function KanbanBoardView() {
     setError("");
   };
 
+  /**
+   * Persists the task edits (including assignments) and closes the modal.
+   */
   const handleUpdateTask = async () => {
     if (!selectedTask || !editTaskTitle.trim()) {
       setError("Task title is required");
@@ -214,12 +242,14 @@ export function KanbanBoardView() {
     }
   };
 
+  /** Opens the Delete confirmation modal for a task. */
   const openDeleteConfirm = (task: TaskWithAssignees) => {
     setSelectedTask(task);
     setShowDeleteConfirm(true);
     setError("");
   };
 
+  /** Deletes the selected task after confirmation. */
   const handleDeleteTask = async () => {
     if (!selectedTask) return;
 
@@ -233,6 +263,7 @@ export function KanbanBoardView() {
     }
   };
 
+  /** Opens project settings modal and initializes editable fields. */
   const openProjectSettings = () => {
     if (!project) return;
     setEditProjectTitle(project.title);
@@ -241,6 +272,7 @@ export function KanbanBoardView() {
     setError("");
   };
 
+  /** Updates the project metadata (title/description). */
   const handleUpdateProject = async () => {
     if (!project || !editProjectTitle.trim()) {
       setError("Project title is required");
@@ -257,6 +289,11 @@ export function KanbanBoardView() {
     }
   };
 
+  /**
+   * Adds a user to the project by email.
+   *
+   * Flow: lookup user by email -> add to project -> refresh project/task data.
+   */
   const handleAddUserToProject = async () => {
     if (!project || !newUserEmail.trim()) {
       setError("Please enter a user email");
@@ -303,6 +340,9 @@ export function KanbanBoardView() {
     }
   };
 
+  /**
+   * Removes a user from the project and unassigns their tasks first.
+   */
   const handleRemoveUserFromProject = async (userId: string) => {
     if (!project) return;
 
@@ -342,6 +382,9 @@ export function KanbanBoardView() {
     }
   };
 
+  /**
+   * Current user leaves the project (unassign tasks, remove membership, redirect).
+   */
   const handleLeaveProject = async () => {
     if (!project || !user) return;
 
@@ -389,6 +432,7 @@ export function KanbanBoardView() {
     }
   };
 
+  /** Deletes the project after user confirmation and navigates back. */
   const handleDeleteProject = async () => {
     if (!project) return;
 

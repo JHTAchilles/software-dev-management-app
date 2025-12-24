@@ -21,6 +21,11 @@ interface EditTaskModalProps {
   onClose: () => void;
 }
 
+/**
+ * Modal dialog for editing a task’s fields and assignees.
+ *
+ * This component is “controlled”: the parent provides the state and callbacks.
+ */
 export function EditTaskModal({
   selectedTask,
   projectUsers,

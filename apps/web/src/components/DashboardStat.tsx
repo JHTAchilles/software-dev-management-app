@@ -3,6 +3,9 @@ interface DashboardStatProps {
   children: React.ReactNode;
 }
 
+/**
+ * Small stat card used on the dashboard header.
+ */
 export function DashboardStat({ title, children }: DashboardStatProps) {
   return (
     <div className="bg-card/60 dark:bg-card-dark/60 rounded-xl p-4 backdrop-blur">

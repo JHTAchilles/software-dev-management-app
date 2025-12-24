@@ -7,6 +7,9 @@ import { formatDashboardDate } from "@/utils/date";
 import { FiCalendar, FiChevronRight } from "react-icons/fi";
 import { Project } from "@/types";
 
+/**
+ * Dashboard card that links to a project’s Kanban board.
+ */
 export function ProjectCard({ project }: { project: Project }) {
   return (
     <Link href={`/project/${project.id}`}>

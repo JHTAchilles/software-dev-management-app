@@ -23,6 +23,14 @@ interface ProjectSettingsModalProps {
   onClose: () => void;
 }
 
+/**
+ * Modal for managing a project.
+ *
+ * Tabs:
+ * - Edit metadata (title/description)
+ * - Manage members
+ * - Danger zone (delete)
+ */
 export function ProjectSettingsModal({
   project,
   currentUserId,

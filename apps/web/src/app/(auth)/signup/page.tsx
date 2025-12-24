@@ -5,6 +5,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 
+/**
+ * Signup page.
+ *
+ * Collects username/email/password and requires a valid license key.
+ * On success, `AuthContext.register` logs the user in and redirects.
+ */
 export default function Signup() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -15,6 +21,11 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
 
+  /**
+   * Submits the signup form and calls the backend register endpoint.
+   *
+   * Performs client-side validations to provide faster feedback.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");

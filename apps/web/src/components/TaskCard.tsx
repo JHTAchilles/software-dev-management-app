@@ -13,13 +13,21 @@ import { TaskWithAssignees, TaskState } from "@/types";
 import { formatTaskDate } from "@/utils/date";
 
 interface TaskCardProps {
+  /** Task data to render and use for DnD payload. */
   task: TaskWithAssignees;
+  /** Tailwind gradient classes for the top accent bar. */
   colorHeader: string;
+  /** Callback invoked when the user changes state (if supported by parent). */
   onUpdateState: (taskId: string, newState: TaskState) => void;
+  /** Optional edit handler (controls whether the “more” button is shown). */
   onEditClick?: (task: TaskWithAssignees) => void;
+  /** Optional delete handler (controls whether delete UI is shown). */
   onDeleteClick?: (task: TaskWithAssignees) => void;
 }
 
+/**
+ * Draggable task card used inside a Kanban column.
+ */
 export function TaskCard({
   task,
   colorHeader,
@@ -45,7 +53,7 @@ export function TaskCard({
       }
     : undefined;
 
-  // Close menu when clicking outside
+  /** Close the task menu when clicking outside the menu container. */
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {

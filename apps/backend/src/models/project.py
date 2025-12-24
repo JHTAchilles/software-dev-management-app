@@ -1,3 +1,8 @@
+"""Project ORM model.
+
+Defines the `Project` entity and the user<->project association table.
+"""
+
 from sqlalchemy import String, DateTime, ForeignKey, Table, Column, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
@@ -23,6 +28,11 @@ user_projects = Table(
 
 
 class Project(Base):
+    """Database model for a project.
+
+    A project has many users (members) and many tasks.
+    """
+
     __tablename__ = "projects"
 
     id: Mapped[UUID] = mapped_column(

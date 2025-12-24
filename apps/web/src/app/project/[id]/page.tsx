@@ -4,6 +4,11 @@ import { Suspense } from "react";
 import { KanbanBoardView } from "@/components/KanbanBoardView";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
+/**
+ * Project detail route.
+ *
+ * Renders the full Kanban board for a project.
+ */
 export default function ProjectPage() {
   return (
     <ProtectedRoute>

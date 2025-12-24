@@ -1,7 +1,10 @@
 import { ApiError } from "@/types";
 
 /**
- * Helper function to make authenticated API calls
+ * Make an authenticated `fetch` request.
+ *
+ * Adds `Authorization: Bearer <token>` when available.
+ * If a 401 is returned, clears the token and redirects to `/login`.
  */
 export async function fetchWithAuth(
   url: string,
@@ -37,7 +40,10 @@ export async function fetchWithAuth(
 }
 
 /**
- * Helper function to handle API errors
+ * Convert a non-OK HTTP response into a thrown `Error`.
+ *
+ * Attempts to parse `{ detail: string }` from the backend, with a
+ * safe fallback to status text.
  */
 export async function handleApiError(response: Response): Promise<never> {
   let errorMessage = "An error occurred";
@@ -59,7 +65,7 @@ export async function handleApiError(response: Response): Promise<never> {
 }
 
 /**
- * Make a GET request with authentication
+ * Typed GET request using `fetchWithAuth`.
  */
 export async function apiGet<T>(url: string): Promise<T> {
   const response = await fetchWithAuth(url);
@@ -72,7 +78,7 @@ export async function apiGet<T>(url: string): Promise<T> {
 }
 
 /**
- * Make a POST request with authentication
+ * Typed POST request using `fetchWithAuth`.
  */
 export async function apiPost<T>(url: string, data?: any): Promise<T> {
   const response = await fetchWithAuth(url, {
@@ -88,7 +94,7 @@ export async function apiPost<T>(url: string, data?: any): Promise<T> {
 }
 
 /**
- * Make a PUT request with authentication
+ * Typed PUT request using `fetchWithAuth`.
  */
 export async function apiPut<T>(url: string, data?: any): Promise<T> {
   const response = await fetchWithAuth(url, {
@@ -104,7 +110,9 @@ export async function apiPut<T>(url: string, data?: any): Promise<T> {
 }
 
 /**
- * Make a DELETE request with authentication
+ * DELETE request using `fetchWithAuth`.
+ *
+ * Treats 204 as success.
  */
 export async function apiDelete(url: string): Promise<void> {
   const response = await fetchWithAuth(url, {

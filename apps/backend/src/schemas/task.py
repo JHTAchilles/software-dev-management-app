@@ -1,3 +1,5 @@
+"""Pydantic schemas for tasks."""
+
 from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional
@@ -8,6 +10,8 @@ from src.models.task import TaskState
 
 
 class TaskBase(BaseModel):
+    """Common task fields shared by create/update/response schemas."""
+
     title: str = Field(..., min_length=1, max_length=200)
     description: Optional[str] = Field(None, max_length=2000)
     state: TaskState = Field(default=TaskState.SCHEDULED)
@@ -15,10 +19,14 @@ class TaskBase(BaseModel):
 
 
 class TaskCreate(TaskBase):
+    """Request body for creating a task in a project."""
+
     project_id: uuid.UUID
 
 
 class TaskUpdate(BaseModel):
+    """Request body for updating a task (partial updates allowed)."""
+
     title: Optional[str] = Field(None, min_length=1, max_length=200)
     description: Optional[str] = Field(None, max_length=2000)
     state: Optional[TaskState] = None
@@ -26,6 +34,8 @@ class TaskUpdate(BaseModel):
 
 
 class TaskResponse(TaskBase):
+    """Response model returned for task data."""
+
     id: uuid.UUID
     project_id: uuid.UUID
     created_at: datetime
@@ -36,6 +46,8 @@ class TaskResponse(TaskBase):
 
 
 class UserBasicInfo(BaseModel):
+    """Minimal user representation used in nested task payloads."""
+
     id: uuid.UUID
     username: str
     email: str
@@ -45,6 +57,8 @@ class UserBasicInfo(BaseModel):
 
 
 class TaskWithAssignees(TaskResponse):
+    """Task response enriched with assignee list."""
+
     assignees: list[UserBasicInfo]
 
     class Config:
@@ -52,6 +66,8 @@ class TaskWithAssignees(TaskResponse):
 
 
 class ProjectBasicInfo(BaseModel):
+    """Minimal project representation used in nested task payloads."""
+
     id: uuid.UUID
     title: str
 
@@ -60,6 +76,8 @@ class ProjectBasicInfo(BaseModel):
 
 
 class TaskWithDetails(TaskWithAssignees):
+    """Task response enriched with assignees and its project."""
+
     project: ProjectBasicInfo
 
     class Config:

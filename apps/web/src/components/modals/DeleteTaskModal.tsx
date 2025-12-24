@@ -10,6 +10,9 @@ interface DeleteTaskModalProps {
   onClose: () => void;
 }
 
+/**
+ * Confirmation modal for deleting a task.
+ */
 export function DeleteTaskModal({
   selectedTask,
   error,

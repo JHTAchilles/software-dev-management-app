@@ -1,5 +1,14 @@
 "use client";
 
+/**
+ * Authentication context for the web app.
+ *
+ * Responsibilities:
+ * - Persist/access the JWT access token in `localStorage`
+ * - Provide `login`, `register`, and `logout` actions
+ * - Expose `user`, `loading`, and `isAuthenticated` state
+ */
+
 import {
   createContext,
   useContext,
@@ -22,6 +31,11 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+/**
+ * React provider that owns auth state.
+ *
+ * Must wrap any component tree that calls `useAuth()`.
+ */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -32,6 +46,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     checkAuth();
   }, []);
 
+  /**
+   * Validates existing access token (if present) by calling `/auth/me`.
+   *
+   * On failure, clears the token and resets the user state.
+   */
   const checkAuth = async () => {
     try {
       const token = localStorage.getItem("access_token");
@@ -64,6 +83,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  /**
+   * Logs a user in via the OAuth2 password flow.
+   *
+   * - Stores the access token
+   * - Fetches the current user profile
+   * - Redirects to `/dashboard`
+   */
   const login = async (credentials: LoginRequest) => {
     try {
       // Create form data as required by OAuth2
@@ -109,6 +135,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  /**
+   * Registers a new user, then automatically logs them in.
+   *
+   * Throws on API error so the caller can present messages.
+   */
   const register = async (data: RegisterRequest) => {
     try {
       const response = await fetch(API_ENDPOINTS.auth.register, {
@@ -133,6 +164,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  /**
+   * Clears local auth state and returns to the login page.
+   */
   const logout = () => {
     localStorage.removeItem("access_token");
     setUser(null);
@@ -155,6 +189,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * Accessor hook for auth context.
+ *
+ * @throws if used outside an `AuthProvider`.
+ */
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {

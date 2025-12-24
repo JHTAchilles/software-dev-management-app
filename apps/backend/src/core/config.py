@@ -19,6 +19,9 @@ class Settings(BaseSettings):
 
     @field_validator("ALLOWED_ORIGINS")
     def parse_allowed_origins(cls, v: str) -> List[str]:
+        """
+        Parse a comma-separated origins string into a list.
+        """
         return v.split(",") if v else []
 
     class Config:

@@ -3,6 +3,11 @@ import AuthenticatedNav from "@/components/AuthenticatedNav";
 import { AuthProvider } from "@/contexts/AuthContext";
 import "./globals.css";
 
+/**
+ * Root layout for the Next.js app.
+ *
+ * Wraps the app with `AuthProvider` and renders shared navigation/footer.
+ */
 export default function RootLayout({
   children,
 }: {

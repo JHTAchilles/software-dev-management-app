@@ -9,12 +9,28 @@ import {
   ProjectWithUsers,
 } from "@/types";
 
+/**
+ * Project/task data hook.
+ *
+ * Owns state for:
+ * - project details
+ * - task list
+ * - loading/error flags
+ *
+ * And exposes convenience methods that call the API and keep local state
+ * in sync.
+ */
 export function useProjectTasks(projectId: string) {
   const [tasks, setTasks] = useState<TaskWithAssignees[]>([]);
   const [project, setProject] = useState<ProjectWithUsers | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  /**
+   * Fetch project details and all tasks.
+   *
+   * @param silent When true, does not flip the `loading` flag (used for polling).
+   */
   const fetchProjectAndTasks = async (silent = false) => {
     if (!projectId) return;
 
@@ -46,6 +62,10 @@ export function useProjectTasks(projectId: string) {
     }
   };
 
+  /**
+   * Fetch a single task by ID.
+   * Returns `null` instead of throwing to simplify callers.
+   */
   const fetchTaskById = async (
     taskId: string,
   ): Promise<TaskWithAssignees | null> => {
@@ -60,6 +80,7 @@ export function useProjectTasks(projectId: string) {
     }
   };
 
+  /** Create a new task and append it to local state. */
   const createTask = async (taskData: CreateTaskRequest) => {
     try {
       const newTask = await apiPost<TaskWithAssignees>(
@@ -76,6 +97,9 @@ export function useProjectTasks(projectId: string) {
     }
   };
 
+  /**
+   * Update only the task state.
+   */
   const updateTaskState = async (taskId: string, newState: TaskState) => {
     if (tasks.find((t) => t.id === taskId)?.state === newState) {
       return;
@@ -98,6 +122,15 @@ export function useProjectTasks(projectId: string) {
     }
   };
 
+  /**
+   * Update a task and reconcile assignees.
+   *
+   * This performs:
+   * - PUT task fields
+   * - POST for new assignees
+   * - DELETE for removed assignees
+   * - refetch the updated task for canonical state
+   */
   const updateTask = async (
     taskId: string,
     updateData: UpdateTaskRequest,
@@ -138,6 +171,7 @@ export function useProjectTasks(projectId: string) {
     }
   };
 
+  /** Delete a task and remove it from local state. */
   const deleteTask = async (taskId: string) => {
     try {
       await apiDelete(API_ENDPOINTS.tasks.delete(taskId));
@@ -150,6 +184,7 @@ export function useProjectTasks(projectId: string) {
     }
   };
 
+  /** Update a project’s title/description and update local project state. */
   const updateProject = async (title: string, description?: string) => {
     if (!project) throw new Error("No project loaded");
 
@@ -173,6 +208,7 @@ export function useProjectTasks(projectId: string) {
     }
   };
 
+  /** Remove a user from the project and update local project state. */
   const removeUserFromProject = async (userId: string) => {
     if (!project) throw new Error("No project loaded");
 
@@ -192,6 +228,7 @@ export function useProjectTasks(projectId: string) {
     }
   };
 
+  /** Delete the current project. Callers typically navigate away afterward. */
   const deleteProject = async () => {
     if (!project) throw new Error("No project loaded");
 

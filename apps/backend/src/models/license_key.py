@@ -1,3 +1,9 @@
+"""
+License key ORM model.
+
+License keys gate account creation and can be marked as is_active.
+"""
+
 from sqlalchemy import String, Boolean, DateTime
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
@@ -10,6 +16,8 @@ from src.db.database import Base
 
 
 class LicenseKey(Base):
+    """Database model for a license key used during registration."""
+
     __tablename__ = "license_keys"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -29,5 +37,6 @@ class LicenseKey(Base):
         UUID(as_uuid=True), nullable=True
     )  # log which user used this key
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        """Debug representation for logs and shell sessions."""
         return f"<LicenseKey(key={self.key}, is_active={self.is_active})>"

@@ -7,6 +7,11 @@ interface ProjectStatsProps {
   completedTasks: number;
 }
 
+/**
+ * Summary stats for a project board.
+ *
+ * Expects precomputed counts (does not compute from task list).
+ */
 export function ProjectStats({
   totalTasks,
   scheduledTasks,

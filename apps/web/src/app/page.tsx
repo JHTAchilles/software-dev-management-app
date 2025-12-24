@@ -1,6 +1,11 @@
 import Link from "next/link";
 import Navigation from "../components/navigation";
 
+/**
+ * Public marketing/landing page.
+ *
+ * Shows the unauthenticated navigation and a CTA to sign up.
+ */
 export default function Home() {
   return (
     <div className="min-h-screen">

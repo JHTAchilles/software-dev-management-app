@@ -13,6 +13,11 @@ interface KanbanColumnProps {
   onDeleteClick?: (task: TaskWithAssignees) => void;
 }
 
+/**
+ * One Kanban column (Scheduled / In Progress / Completed).
+ *
+ * Acts as a DnD drop target and renders its list of draggable `TaskCard`s.
+ */
 export function KanbanColumn({
   title,
   color,

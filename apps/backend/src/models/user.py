@@ -1,3 +1,8 @@
+"""User ORM model.
+
+Represents an authenticated user and their relationships to projects/tasks.
+"""
+
 from sqlalchemy import String, DateTime, Boolean, text, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
@@ -11,6 +16,8 @@ if TYPE_CHECKING:
 
 
 class User(Base):
+    """Database model for an application user."""
+
     __tablename__ = "users"
 
     id: Mapped[UUID] = mapped_column(

@@ -5,6 +5,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 
+/**
+ * Login page.
+ *
+ * Uses the OAuth2 password flow via `AuthContext.login`.
+ */
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -12,6 +17,9 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
+  /**
+   * Submits the login form and triggers `AuthContext.login`.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
