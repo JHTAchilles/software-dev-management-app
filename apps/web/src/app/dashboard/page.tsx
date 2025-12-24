@@ -12,6 +12,13 @@ import { formatTaskDate } from "@/utils/date";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { DashboardStat } from "@/components/DashboardStat";
 
+/**
+ * Authenticated dashboard.
+ *
+ * - Lists projects the user belongs to
+ * - Shows a small stats summary (projects, assigned tasks, closest due date)
+ * - Provides a modal to create new projects
+ */
 export default function Dashboard() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [assignedTasks, setAssignedTasks] = useState<Task[]>([]);
@@ -24,24 +31,43 @@ export default function Dashboard() {
 
   // Fetch projects on component mount
   useEffect(() => {
+    // Initial fetch (shows loading/errors)
     fetchProjects();
     fetchAssginedTasks();
+
+    // Refresh projects every 10 seconds without affecting loading/error UI
+    const interval = setInterval(() => {
+      fetchProjects(true).catch(() => {});
+    }, 10000);
+
+    // Clean up interval on unmount
+    return () => clearInterval(interval);
   }, []);
 
-  const fetchProjects = async () => {
+  /**
+   * Fetches projects for the current user.
+   *
+   * @param silent When true, does not affect the loading/error UI (polling).
+   */
+  const fetchProjects = async (silent = false) => {
     try {
-      setLoading(true);
-      setError("");
+      if (!silent) {
+        setLoading(true);
+        setError("");
+      }
       const data = await apiGet<Project[]>(API_ENDPOINTS.projects.list);
       setProjects(data);
     } catch (err: any) {
-      setError(err.message || "Failed to load projects");
-      console.error("Error fetching projects:", err);
+      if (!silent) {
+        setError(err.message || "Failed to load projects");
+        console.error("Error fetching projects:", err);
+      }
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
+  /** Fetches tasks assigned to the current user across all projects. */
   const fetchAssginedTasks = async () => {
     try {
       setLoading(true);
@@ -56,6 +82,9 @@ export default function Dashboard() {
     }
   };
 
+  /**
+   * Creates a project via the API and prepends it to local state.
+   */
   const handleCreateProject = async () => {
     if (!newProjectTitle.trim()) {
       setError("Project title is required");
