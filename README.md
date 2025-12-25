@@ -1,41 +1,109 @@
-# CSCI3100 Project: Kanban-like Software Development Manager
+# CSCI3100 Project: Task Slayer - Kanban-like Software Development Task Manager
 
-## Overview
+A Kanban-style software development manager built as a monorepo:
 
-This repository contains the project for the course **CSCI3100**. The goal of this project is to design and implement a **Kanban-like Software Development Manager** web application.
-
-## Project Description
-
-This project is a Kanban-style web application designed to help teams and individuals manage software development projects efficiently. The application provides a visual board for tracking tasks and their progress, supporting collaborative workflows.
+- **Web UI**: Next.js app (Kanban board + auth UI)
+- **Backend API**: FastAPI service (auth, projects, tasks, license keys)
 
 ## Key Features
 
-- **User Authentication:** Users can sign up (with license key), log in, and log out securely.
-- **User License Mechanism:** During sign up, users must provide a valid license key to create an account.
-- **Task Management:** Create, edit, and delete tasks.
-- **Task Assignment:** Assign tasks to users and update assignees as needed.
-- **Progress Tracking:** Move tasks between columns such as "Scheduled", "In Progress", and "Completed" to reflect their current status.
-- **Drag-and-Drop Interface:** Easily update task assignments and progress by dragging and dropping tasks between columns.
-- **Kanban Board:** Visual task management with columns for different progress states.
-- **Support for Multiple Users and Teams:** Collaborate on projects with others.
+- **User authentication** (signup/login)
+- **License key gated signup**
+- **Projects and tasks** (CRUD)
+- **Kanban workflow** with task states (e.g. Scheduled → In Progress → Completed)
+- **Drag-and-drop** interactions in the UI
 
-## Getting Started
+## Repository Structure
 
-1. **Install dependencies:**
+| Path           | What it is                                            |
+| -------------- | ----------------------------------------------------- |
+| `apps/web`     | Next.js web app (port 3000)                           |
+| `apps/docs`    | Next.js docs app (port 3001)                          |
+| `apps/backend` | FastAPI backend (port 8000)                           |
+| `packages/*`   | Shared configs (`eslint-config`, `typescript-config`) |
 
-   ```bash
-   yarn install
-   ```
+## Prerequisites
 
-2. **Run the development server:**
+- Node.js `>=18` and Yarn Classic (`yarn@1.22.x`)
+- Python `>=3.13`
+- Recommended for backend: `uv` (Python package manager/runner)
 
-   ```bash
-   yarn dev
-   ```
+## Quick Start (Frontend)
 
-   This will start the app locally. Open http://localhost:3000 in your browser to view it.
+From the repo root:
+
+```bash
+yarn install
+yarn dev
+```
+
+This starts:
+
+- Web UI: http://localhost:3000
+- Docs UI: http://localhost:3001
+
+## Quick Start (Backend API)
+
+1. Configure environment variables:
+
+```bash
+cd apps/backend
+cp .env.example .env
+```
+
+Edit `apps/backend/.env` as needed (notably `DATABASE_URL` and `ALLOWED_ORIGINS`).
+
+2. Run the API:
+
+```bash
+cd apps/backend
+uv run python main.py
+```
+
+Backend endpoints:
+
+- API base: http://localhost:8000
+- Swagger UI: http://localhost:8000/docs
+- Health check: http://localhost:8000/health
+
+## License Keys (for Signup)
+
+To generate and insert license keys into the backend database:
+
+```bash
+cd apps/backend
+uv run python generate_license_keys.py 10
+```
+
+## Common Commands
+
+From repo root:
+
+- Dev: `yarn dev`
+- Build: `yarn build`
+- Lint: `yarn lint`
+- Typecheck: `yarn check-types`
+- Format: `yarn format`
+
+## Testing
+
+Frontend (Jest):
+
+```bash
+yarn workspace web test
+```
+
+Backend (pytest):
+
+```bash
+cd apps/backend
+uv sync --extra test
+uv run pytest
+```
 
 ## Contributors
 
-- JHTAchilles
-- KieranChiu
+- Wong Ching Kei Achilles
+- Chiu Ki Wai
+- Niu Chen Yu
+- Vuong Tsz Ching
