@@ -1,7 +1,7 @@
 [project]
-name = "backend"
-version = "0.1.0"
-description = "Add your description here"
+name = "Task-Slayer-backend"
+version = "1.0.0"
+description = "The backend service for Task Slayer, a task management application."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
